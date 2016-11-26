@@ -1,0 +1,66 @@
+{
+  "name": "contributte/console",
+  "description": "Best console to nette framework",
+  "keywords": ["nette", "symfony", "console"],
+  "type": "project",
+  "license": ["MIT"],
+  "homepage": "https://github.com/contributte/console",
+  "authors": [
+    {
+      "name": "Milan Felix Sulc",
+      "homepage": "https://jfx.cz"
+    }
+  ],
+  "require": {
+    "php": ">= 5.6",
+    "nette/di": "^2.4.4",
+    "symfony/console": "^3.1.7"
+  },
+  "require-dev": {
+    "nette/http": "^2.4.2",
+    "nette/tester": "~1.7.1",
+    "ninjify/qa": "^0.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Contributte\\Console\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Fixtures\\": "tests/fixtures"
+    }
+  },
+  "scripts": {
+    "qa": [
+      "@qa-linter",
+      "@qa-codesniffer"
+    ],
+    "qa-codesniffer": [
+      "Ninjify\\Composer\\Script\\CodeSniffer::execute"
+    ],
+    "qa-codefixer": [
+      "Ninjify\\Composer\\Script\\CodeFixer::execute"
+    ],
+    "qa-linter": [
+      "Ninjify\\Composer\\Script\\Linter::execute"
+    ]
+  },
+  "extra": {
+    "ninjify": {
+      "qa": {
+        "codesniffer": {
+          "ruleset": "nette",
+          "folders": ["src", "tests"]
+        },
+        "codefixer": {
+          "ruleset": "nette",
+          "folders": ["src", "tests"]
+        },
+        "linter": {
+          "folders": ["src", "tests"]
+        }
+      }
+    }
+  }
+}
