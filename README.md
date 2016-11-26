@@ -33,7 +33,13 @@ extensions:
 
 ### URL address
 
+There's no url in console mode (SAPI) mode. But you can setup it by following line.
+
 ```yaml
 console:
     url: www.example.com
 ```
+
+-----
+
+Thank you for testing, reporting and contributing.
