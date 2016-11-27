@@ -1,6 +1,6 @@
 # Console
 
-Ultra easy-to-use `Symfony\Console` to `Nette Framework`.
+Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) to [`Nette Framework`](https://github.com/nette/).
 
 -----
 
