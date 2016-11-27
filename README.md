@@ -29,14 +29,14 @@ extensions:
     
 ```
 
-Extension looks for all commands extending from `Contributte\Console\Command\BaseCommand`. And automatically adds them to the console application. 
+Extension looks for all commands extending from [`Contributte\Console\Command\BaseCommand`](https://github.com/contributte/console/blob/master/src/Command/BaseCommand.php). And automatically adds them to the console application. 
 That's all. You don't have to be worried.
 
 ## Configuration
 
 ### URL address
 
-There's no url in console mode (SAPI) mode. But you can setup it by following line.
+There's no url in console mode (SAPI). But you can setup it by following line.
 
 ```yaml
 console:
