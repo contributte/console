@@ -29,6 +29,9 @@ extensions:
     
 ```
 
+Extension looks for all commands extending from `Contributte\Console\Command\BaseCommand`. And automatically adds them to the console application. 
+That's all. You don't have to be worried.
+
 ## Configuration
 
 ### URL address
@@ -38,6 +41,39 @@ There's no url in console mode (SAPI) mode. But you can setup it by following li
 ```yaml
 console:
     url: www.example.com
+```
+
+## Example
+
+```php
+use Contributte\Console\Command\BaseCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+final class FooCommand extends BaseCommand
+{
+
+	/**
+	 * Configure command
+	 *
+	 * @return void
+	 */
+	protected function configure()
+	{
+		$this->setName('foo');
+	}
+
+	/**
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return void
+	 */
+	protected function execute(InputInterface $input, OutputInterface $output)
+	{
+		// Some magic..
+	}
+
+}
 ```
 
 -----
