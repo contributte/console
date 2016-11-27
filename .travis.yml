@@ -31,15 +31,20 @@ matrix:
 before_script:
   # Composer
   - travis_retry composer install --no-interaction
-  # Coverate
-  - if [ $TRAVIS_PHP_VERSION == "7.0" ]; then COVERAGE="-d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src"; fi
+  # Coverage
+  - if [[ "$TRAVIS_PHP_VERSION" == "7.0" && "$COMPOSER_FLAG" == "" ]]; then COVERAGE=1; fi
 
 script:
   # Quality Assurance
   - travis_retry composer run-script qa
-  # Nette\Teser
-  - vendor/bin/tester -p php -i $COVERAGE
-  - vendor/bin/tester tests/cases -s -p php -c tests/php-unix.ini $COVERAGE
+
+  # Nette\Tester
+  - composer run-script qa-tester-info
+  - composer run-script qa-tester
+
+  # Nette\Tester + CodeCoverage
+  - if [ "$COVERAGE" != "" ]; then composer run-script qa-tester-coverage-info; fi
+  - if [ "$COVERAGE" != "" ]; then composer run-script qa-tester-coverage; fi
 
 after_script:
   # Coverage (Coveralls)
