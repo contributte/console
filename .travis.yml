@@ -36,7 +36,8 @@ before_script:
 
 script:
   # Quality Assurance
-  - travis_retry composer run-script qa
+  - travis_retry composer run-script qa-linter
+  - travis_retry composer run-script qa-codesniffer
 
   # Nette\Tester
   - composer run-script qa-tester-info
