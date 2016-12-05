@@ -2,7 +2,7 @@
   "name": "contributte/console",
   "description": "Best console to nette framework",
   "keywords": ["nette", "symfony", "console"],
-  "type": "project",
+  "type": "library",
   "license": ["MIT"],
   "homepage": "https://github.com/contributte/console",
   "authors": [
