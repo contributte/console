@@ -18,6 +18,10 @@ final class ConsoleExtension extends CompilerExtension
 	/** @var array */
 	private $defaults = [
 		'url' => NULL,
+		'name' => NULL,
+		'version' => NULL,
+		'catchExceptions' => NULL,
+		'autoExit' => NULL,
 	];
 
 	/**
@@ -31,9 +35,26 @@ final class ConsoleExtension extends CompilerExtension
 		if (PHP_SAPI !== 'cli') return;
 
 		$builder = $this->getContainerBuilder();
+		$config = $this->validateConfig($this->defaults);
 
-		$builder->addDefinition($this->prefix('application'))
+		$application = $builder->addDefinition($this->prefix('application'))
 			->setClass(Application::class);
+
+		if ($config['name'] !== NULL) {
+			$application->addSetup('setName', [$config['name']]);
+		}
+
+		if ($config['version'] !== NULL) {
+			$application->addSetup('setVersion', [$config['version']]);
+		}
+
+		if ($config['catchExceptions'] !== NULL) {
+			$application->addSetup('setCatchExceptions', [(bool) $config['catchExceptions']]);
+		}
+
+		if ($config['autoExit'] !== NULL) {
+			$application->addSetup('autoExit', [(bool) $config['autoExit']]);
+		}
 	}
 
 	/**

@@ -34,13 +34,22 @@ That's all. You don't have to be worried.
 
 ## Configuration
 
+```yaml
+console:
+    name: Acme Project
+    version: 1.0
+    catchExceptions: true / false
+    autoExit: true / false
+    url: www.acme.com
+```
+
 ### URL address
 
 There's no url in console mode (SAPI). But you can setup it by following line.
 
 ```yaml
 console:
-    url: www.example.com
+    url: www.acme.com
 ```
 
 ## Example
