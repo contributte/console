@@ -4,7 +4,7 @@
  * Test: DI\ConsoleExtension
  */
 
-use Contributte\Console\Command\BaseCommand;
+use Contributte\Console\Command\AbstractCommand;
 use Contributte\Console\DI\ConsoleExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
@@ -23,7 +23,7 @@ test(function () {
     /** @var Container $container */
     $container = new $class;
 
-    Assert::count(0, $container->findByType(BaseCommand::class));
+    Assert::count(0, $container->findByType(AbstractCommand::class));
 });
 
 
@@ -40,6 +40,6 @@ test(function () {
     /** @var Container $container */
     $container = new $class;
 
-    Assert::count(1, $container->findByType(BaseCommand::class));
-    Assert::type(FooCommand::class, $container->getByType(BaseCommand::class));
+    Assert::count(1, $container->findByType(AbstractCommand::class));
+    Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
 });

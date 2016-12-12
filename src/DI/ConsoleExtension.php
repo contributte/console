@@ -3,7 +3,7 @@
 namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
-use Contributte\Console\Command\BaseCommand;
+use Contributte\Console\Command\AbstractCommand;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
 use Nette\Http\Request;
@@ -57,7 +57,7 @@ final class ConsoleExtension extends CompilerExtension
 		}
 
 		// Register all commands
-		$commands = $builder->findByType(BaseCommand::class);
+		$commands = $builder->findByType(AbstractCommand::class);
 		foreach ($commands as $name => $command) {
 			$application->addSetup('add', [$command]);
 		}

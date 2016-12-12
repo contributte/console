@@ -29,7 +29,7 @@ extensions:
     
 ```
 
-Extension looks for all commands extending from [`Contributte\Console\Command\BaseCommand`](https://github.com/contributte/console/blob/master/src/Command/BaseCommand.php). And automatically adds them to the console application. 
+Extension looks for all commands extending from [`Contributte\Console\Command\AbstractCommand`](https://github.com/contributte/console/blob/master/src/Command/AbstractCommand.php). And automatically adds them to the console application. 
 That's all. You don't have to be worried.
 
 ## Configuration
@@ -46,11 +46,11 @@ console:
 ## Example
 
 ```php
-use Contributte\Console\Command\BaseCommand;
+use Contributte\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class FooCommand extends BaseCommand
+final class FooCommand extends AbstractCommand
 {
 
 	/**
