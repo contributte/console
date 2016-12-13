@@ -22,7 +22,7 @@
     "nette/http": "^2.4.2"
   },
   "suggest": {
-    "nette/di": "For CompilerExtension -> ConsoleExtension"
+    "nette/di": "to use ConsoleExtension[CompilerExtension]"
   },
   "autoload": {
     "psr-4": {
