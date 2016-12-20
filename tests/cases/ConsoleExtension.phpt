@@ -15,31 +15,31 @@ use Tests\Fixtures\FooCommand;
 require_once __DIR__ . '/../bootstrap.php';
 
 test(function () {
-    $loader = new ContainerLoader(TEMP_DIR, TRUE);
-    $class = $loader->load(function (Compiler $compiler) {
-        $compiler->addExtension('console', new ConsoleExtension());
-    }, [microtime(), 1]);
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('console', new ConsoleExtension());
+	}, [microtime(), 1]);
 
-    /** @var Container $container */
-    $container = new $class;
+	/** @var Container $container */
+	$container = new $class;
 
-    Assert::count(0, $container->findByType(AbstractCommand::class));
+	Assert::count(0, $container->findByType(AbstractCommand::class));
 });
 
 
 test(function () {
-    $loader = new ContainerLoader(TEMP_DIR, TRUE);
-    $class = $loader->load(function (Compiler $compiler) {
-        $compiler->addExtension('console', new ConsoleExtension());
-        $compiler->loadConfig(\Tester\FileMock::create('
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->loadConfig(\Tester\FileMock::create('
         services:
             - Tests\Fixtures\FooCommand
         ', 'neon'));
-    }, [microtime(), 2]);
+	}, [microtime(), 2]);
 
-    /** @var Container $container */
-    $container = new $class;
+	/** @var Container $container */
+	$container = new $class;
 
-    Assert::count(1, $container->findByType(AbstractCommand::class));
-    Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
+	Assert::count(1, $container->findByType(AbstractCommand::class));
+	Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
 });

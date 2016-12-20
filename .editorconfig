@@ -9,7 +9,7 @@ end_of_line = lf
 insert_final_newline = true
 
 # JS / PHP
-[*.{js,php}]
+[*.{js,php,phpt}]
 charset = utf-8
 indent_style = tab
 indent_size = 4
