@@ -12,7 +12,7 @@ use Nette\Http\UrlScript;
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-final class ConsoleExtension extends CompilerExtension
+class ConsoleExtension extends CompilerExtension
 {
 
 	/** @var array */
