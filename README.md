@@ -24,69 +24,18 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) to [`N
 composer require contributte/console
 ```
 
-## Usage
+## Versions
 
-```yaml
-extensions:
-    console: Contributte\Console\DI\ConsoleExtensions
-    
-```
+| State       | Version | Branch   | PHP      |
+|-------------|---------|----------|----------|
+| development | `^0.1`  | `master` | `>= 5.6` |
 
-Extension looks for all commands extending from [`Contributte\Console\Command\AbstractCommand`](https://github.com/contributte/console/blob/master/src/Command/AbstractCommand.php). And automatically adds them to the console application. 
-That's all. You don't have to be worried.
+## Overview
 
-## Configuration
-
-```yaml
-console:
-    name: Acme Project
-    version: 1.0
-    catchExceptions: true / false
-    autoExit: true / false
-    url: www.acme.com
-```
-
-### URL address
-
-There's no url in console mode (SAPI). But you can setup it by following line.
-
-```yaml
-console:
-    url: www.acme.com
-```
-
-## Example
-
-```php
-use Contributte\Console\Command\AbstractCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-final class FooCommand extends AbstractCommand
-{
-
-	/**
-	 * Configure command
-	 *
-	 * @return void
-	 */
-	protected function configure()
-	{
-		$this->setName('foo');
-	}
-
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return void
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		// Some magic..
-	}
-
-}
-```
+- [Usage - how to register](https://github.com/contributte/console/blob/master/.docs/README.md#usage)
+- [Configuration - how to configure](https://github.com/contributte/console/blob/master/.docs/README.md#configuration)
+- [Command - example command](https://github.com/contributte/console/blob/master/.docs/README.md#command)
+- [Entrypoint - console script](https://github.com/contributte/console/blob/master/.docs/README.md#entrypoint)
 
 -----
 
