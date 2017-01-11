@@ -3,11 +3,11 @@
 namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
-use Contributte\Console\Command\AbstractCommand;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
 use Nette\Http\Request;
 use Nette\Http\UrlScript;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
@@ -78,7 +78,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		// Register all commands
-		$commands = $builder->findByType(AbstractCommand::class);
+		$commands = $builder->findByType(Command::class);
 		foreach ($commands as $name => $command) {
 			$application->addSetup('add', [$command]);
 		}
