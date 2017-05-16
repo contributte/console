@@ -22,6 +22,7 @@ class ConsoleExtension extends CompilerExtension
 		'version' => NULL,
 		'catchExceptions' => NULL,
 		'autoExit' => NULL,
+		'helperSet' => NULL,
 	];
 
 	/**
@@ -54,6 +55,10 @@ class ConsoleExtension extends CompilerExtension
 
 		if ($config['autoExit'] !== NULL) {
 			$application->addSetup('autoExit', [(bool) $config['autoExit']]);
+		}
+
+		if ($config['helperSet'] !== NULL) {
+			$application->addSetup('setHelperSet', [$config['helperSet']]);
 		}
 	}
 
