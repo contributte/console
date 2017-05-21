@@ -30,7 +30,7 @@ console:
     helperSet: @customHelperSet
 ```
 
-In fact in console mode / SAPI mode is no http request and thus no URL address. It is inconvenience you have to solve by yoursolve.
+In fact in console mode / SAPI mode is no http request and thus no URL address. This inconvenience you have to solve by yoursolve.
  
 ```yaml
 console:
