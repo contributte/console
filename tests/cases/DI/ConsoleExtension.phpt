@@ -10,10 +10,12 @@ use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
 use Tester\Assert;
+use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
 
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
+// No commands
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
@@ -26,15 +28,15 @@ test(function () {
 	Assert::count(0, $container->findByType(AbstractCommand::class));
 });
 
-
+// 1 command of type FooCommand
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('console', new ConsoleExtension());
-		$compiler->loadConfig(\Tester\FileMock::create('
-        services:
-            - Tests\Fixtures\FooCommand
-        ', 'neon'));
+		$compiler->loadConfig(FileMock::create('
+		services:
+			- Tests\Fixtures\FooCommand
+		', 'neon'));
 	}, [microtime(), 2]);
 
 	/** @var Container $container */

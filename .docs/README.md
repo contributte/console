@@ -28,6 +28,8 @@ console:
     autoExit: true / false
     url: https://contributte.com
     helperSet: @customHelperSet
+    helpers:
+      - Contributte\Console\Helper\ContainerHelper
 ```
 
 In fact in console mode / SAPI mode is no http request and thus no URL address. This inconvenience you have to solve by yoursolve.
@@ -35,6 +37,35 @@ In fact in console mode / SAPI mode is no http request and thus no URL address. 
 ```yaml
 console:
     url: https://contributte.org
+```
+
+You could also define you custom `helperSet` just in case. There are 2 possible approaches. You can register your
+`App\Model\MyCustomHelperSet` as services under `services` section or provide it directly to extesion config `helperSet`.
+
+Already defined service:
+
+```yaml
+services:
+  customHelperSet: App\Model\MyCustomHelperSet
+
+console:
+    helperSet: @customHelperSet
+```
+
+Directly defined helperSet:
+
+```yaml
+console:
+    helperSet: App\Model\MyCustomHelperSet
+```
+
+By default helperSet contains 5 helpers, 4 defined in `Symfony\Component\Console\Application` by default and 1 defined
+by extension itself. In case of need you're able to add more helpers.
+
+```yaml
+console:
+    helpers:
+      - App\Model\MyReallyGreatHelper
 ```
 
 ## Command

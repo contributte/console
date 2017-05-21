@@ -3,10 +3,14 @@
 namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
+use Contributte\Console\Helper\ContainerHelper;
+use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Statement;
 use Nette\Http\Request;
 use Nette\Http\UrlScript;
+use Nette\Utils\Strings;
+use Nette\Utils\Validators;
 use Symfony\Component\Console\Command\Command;
 
 /**
@@ -23,6 +27,9 @@ class ConsoleExtension extends CompilerExtension
 		'catchExceptions' => NULL,
 		'autoExit' => NULL,
 		'helperSet' => NULL,
+		'helpers' => [
+			ContainerHelper::class,
+		],
 	];
 
 	/**
@@ -37,6 +44,8 @@ class ConsoleExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
+
+		Validators::assertField($config, 'helpers', 'array|null');
 
 		$application = $builder->addDefinition($this->prefix('application'))
 			->setClass(Application::class);
@@ -58,7 +67,24 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		if ($config['helperSet'] !== NULL) {
-			$application->addSetup('setHelperSet', [$config['helperSet']]);
+			if (is_string($config['helperSet']) && Strings::startsWith($config['helperSet'], '@')) {
+				// Add already defined service
+				$application->addSetup('setHelperSet', [$config['helperSet']]);
+			} else {
+				// Parse service definition
+				$helperSetDef = $builder->addDefinition($this->prefix('helperSet'));
+				Compiler::loadDefinition($helperSetDef, $config['helperSet']);
+				$application->addSetup('setHelperSet', [$helperSetDef]);
+			}
+		}
+
+		if (is_array($config['helpers'])) {
+			$helpers = 1;
+			foreach ($config['helpers'] as $helper) {
+				$helperDef = $builder->addDefinition($this->prefix('helper.' . $helpers++));
+				Compiler::loadDefinition($helperDef, $helper);
+				$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helperDef]));
+			}
 		}
 	}
 
