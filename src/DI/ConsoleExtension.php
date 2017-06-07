@@ -63,7 +63,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		if ($config['autoExit'] !== NULL) {
-			$application->addSetup('autoExit', [(bool) $config['autoExit']]);
+			$application->addSetup('setAutoExit', [(bool) $config['autoExit']]);
 		}
 
 		if ($config['helperSet'] !== NULL) {
