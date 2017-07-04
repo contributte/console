@@ -8,6 +8,7 @@ use Symfony\Component\Console\Helper\Helper;
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  * @author Filip Procházka <filip@prochazka.su>
+ * @deprecated
  */
 class ContainerHelper extends Helper
 {
