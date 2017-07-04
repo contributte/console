@@ -5,14 +5,12 @@ php:
   - 7.0
   - 7.1
   - hhvm
-  - hhvm-nightly
 
 matrix:
   fast_finish: true
 
   allow_failures:
       - php: hhvm
-      - php: hhvm-nightly
 
   include:
     - php: 5.6
@@ -32,20 +30,17 @@ before_script:
   # Composer
   - travis_retry composer install --no-interaction
   # Coverage
-  - if [[ "$TRAVIS_PHP_VERSION" == "7.0" && "$COMPOSER_FLAG" == "" ]]; then COVERAGE=1; fi
+  - if [[ "$TRAVIS_PHP_VERSION" == "7.1" && "$COMPOSER_FLAG" == "" ]]; then COVERAGE=1; fi
 
 script:
   # Quality Assurance
-  - travis_retry composer run-script qa-linter
-  - travis_retry composer run-script qa-codesniffer
+  - travis_retry composer qa
 
   # Nette\Tester
-  - composer run-script qa-tester-info
-  - composer run-script qa-tester
+  - composer run-script tester
 
   # Nette\Tester + CodeCoverage
-  - if [ "$COVERAGE" != "" ]; then composer run-script qa-tester-coverage-info; fi
-  - if [ "$COVERAGE" != "" ]; then composer run-script qa-tester-coverage; fi
+  - if [ "$COVERAGE" != "" ]; then composer tester-coverage; fi
 
 after_script:
   # Coverage (Coveralls)
