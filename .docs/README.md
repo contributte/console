@@ -70,7 +70,7 @@ console:
 
 ## Command
 
-### First, you have to define the command class:
+### Create command
 
 ```php
 
@@ -106,7 +106,7 @@ final class FooCommand extends AbstractCommand
 }
 ```
 
-### Second, the command needs to be registered in the `dic` (`config.neon`):
+### Register command
 
 ```yml
 services:
