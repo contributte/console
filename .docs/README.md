@@ -70,7 +70,12 @@ console:
 
 ## Command
 
+### First, you have to define the command class:
+
 ```php
+
+namespace App\Console;
+
 use Contributte\Console\Command\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -100,6 +105,15 @@ final class FooCommand extends AbstractCommand
 
 }
 ```
+
+### Second, the command needs to be registered in the `dic` (`config.neon`):
+
+```yml
+services:
+    - App\Console\FooCommand
+```
+
+Maybe you will have to flush `temp/cache` directory.
 
 ## Entrypoint
 
