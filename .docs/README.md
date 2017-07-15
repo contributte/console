@@ -130,6 +130,9 @@ Make sure you set as executable. `chmod +x <root>/bin/console`.
 /** @var Nette\DI\Container $container */
 $container = require __DIR__ . '/../app/bootstrap.php';
 
+// Get application from DI container.
+$application = $container->getByType(Contributte\Console\Application::class);
+
 // Run application.
-$container->getByType(Contributte\Console\Application::class)->run();
+exit($application->run());
 ```
