@@ -16,7 +16,7 @@
     "symfony/console": "^3.2.1"
   },
   "require-dev": {
-    "ninjify/qa": "^0.3.3",
+    "ninjify/qa": "^0.4.0",
     "ninjify/nunjuck": "^0.1.4",
     "nette/di": "^2.4.5",
     "nette/http": "^2.4.3"
