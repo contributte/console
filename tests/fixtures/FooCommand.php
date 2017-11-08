@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class FooCommand extends AbstractCommand
 {
 
+	/** @var string */
+	protected static $defaultName = 'app:foo';
+
 	/**
 	 * Configure command
 	 *

@@ -4,6 +4,7 @@
  * Test: DI\ConsoleExtension
  */
 
+use Contributte\Console\Application;
 use Contributte\Console\Command\AbstractCommand;
 use Contributte\Console\DI\ConsoleExtension;
 use Nette\DI\Compiler;
@@ -34,14 +35,40 @@ test(function () {
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('console', new ConsoleExtension());
 		$compiler->loadConfig(FileMock::create('
+		console:
+			lazy: off
 		services:
-			- Tests\Fixtures\FooCommand
+			foo: Tests\Fixtures\FooCommand
 		', 'neon'));
 	}, [microtime(), 2]);
 
 	/** @var Container $container */
 	$container = new $class;
 
+	Assert::type(Application::class, $container->getByType(Application::class));
+	Assert::true($container->isCreated('foo'));
+	Assert::count(1, $container->findByType(AbstractCommand::class));
+	Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
+});
+
+// 1 command of type FooCommand lazy-loading
+test(function () {
+	$loader = new ContainerLoader(TEMP_DIR, TRUE);
+	$class = $loader->load(function (Compiler $compiler) {
+		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->loadConfig(FileMock::create('
+		console:
+			lazy: on
+		services:
+			foo: Tests\Fixtures\FooCommand
+		', 'neon'));
+	}, [microtime(), 3]);
+
+	/** @var Container $container */
+	$container = new $class;
+
+	Assert::type(Application::class, $container->getByType(Application::class));
+	Assert::false($container->isCreated('foo'));
 	Assert::count(1, $container->findByType(AbstractCommand::class));
 	Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
 });

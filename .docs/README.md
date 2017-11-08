@@ -27,6 +27,7 @@ console:
     catchExceptions: true / false
     autoExit: true / false
     url: https://contributte.com
+    lazy: false
     helperSet: @customHelperSet
     helpers:
       - Contributte\Console\Helper\ContainerHelper
@@ -67,6 +68,17 @@ console:
     helpers:
       - App\Model\MyReallyGreatHelper
 ```
+
+From version 3.4 of Symfony\Console you use command lazy-loading. This extension is fully supported of this feature and
+you can enable it in NEON.
+
+```yaml
+console:
+    lazy: true
+```
+
+From this point, all commands are lazy registered and instanced only if needed. Don't forget, that listing all commands
+needs all commands to be registered, it instance all commands.
 
 ## Command
 

@@ -13,13 +13,13 @@
   ],
   "require": {
     "php": ">= 5.6",
-    "symfony/console": "^3.2.1"
+    "symfony/console": "~3.2.0 | ~3.3.0 | ~3.4.0-BETA3"
   },
   "require-dev": {
-    "ninjify/qa": "^0.4.0",
-    "ninjify/nunjuck": "^0.1.4",
-    "nette/di": "^2.4.5",
-    "nette/http": "^2.4.3"
+    "ninjify/qa": "~0.4.0",
+    "ninjify/nunjuck": "~0.2.0",
+    "nette/di": "~2.4.10",
+    "nette/http": "~2.4.7"
   },
   "suggest": {
     "nette/di": "to use ConsoleExtension[CompilerExtension]"
@@ -40,10 +40,10 @@
       "codesniffer src tests"
     ],
     "tester": [
-      "tester -s -p php --colors 1 -c tests/php-unix.ini tests/cases"
+      "tester -s -p php --colors 1 -C tests/cases"
     ],
     "tester-coverage": [
-      "tester -s -p php --colors 1 -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src tests/cases"
+      "tester -s -p php --colors 1 -C -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src tests/cases"
     ]
   }
 }

@@ -22,6 +22,8 @@ test(function () {
 	$class = $loader->load(function (Compiler $compiler) {
 		$compiler->addExtension('console', new ConsoleExtension());
 		$compiler->loadConfig(FileMock::create('
+		console:
+			lazy: off
 		services:
 			- Tests\Fixtures\HelperSetCommand
 		', 'neon'));
