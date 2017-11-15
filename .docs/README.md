@@ -15,7 +15,7 @@ extensions:
     
 ```
 
-The extension will look for all commands extending from [`Contributte\Console\Command\AbstractCommand`](https://github.com/contributte/console/blob/master/src/Command/AbstractCommand.php) and automatically add them to the console application. 
+The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application. 
 That's all. You don't have to be worried about anything else.
 
 ## Configuration
@@ -87,11 +87,11 @@ From this point, all commands are instanced only if needed. Don't forget, that l
 
 namespace App\Console;
 
-use Contributte\Console\Command\AbstractCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class FooCommand extends AbstractCommand
+final class FooCommand extends Command
 {
 
 	/**

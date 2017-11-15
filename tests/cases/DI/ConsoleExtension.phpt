@@ -5,7 +5,7 @@
  */
 
 use Contributte\Console\Application;
-use Contributte\Console\Command\AbstractCommand;
+use Symfony\Component\Console\Command\Command;
 use Contributte\Console\DI\ConsoleExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
