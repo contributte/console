@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-final class HelperSetCommand extends AbstractCommand
+final class HelperSetCommand extends Command
 {
 
 	/**

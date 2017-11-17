@@ -9,11 +9,14 @@ use Symfony\Component\Console\Command\Command;
  */
 abstract class AbstractCommand extends Command
 {
-    
-    public function __construct($name = null)
+
+    /**
+     * @param string|null $name
+     */
+    public function __construct($name = NULL)
     {
         parent::__construct($name);
-        trigger_error(sprintf('Extending %s is deprecated, extend %s directly.', AbstractCommand::class, Command::class), E_USER_DEPRECATED);
+        trigger_error(sprintf('Extending %s is deprecated, extend %s directly.', self::class, Command::class), E_USER_DEPRECATED);
     }
 
 }
