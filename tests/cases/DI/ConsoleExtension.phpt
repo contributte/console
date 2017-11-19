@@ -5,11 +5,11 @@
  */
 
 use Contributte\Console\Application;
-use Contributte\Console\Command\AbstractCommand;
 use Contributte\Console\DI\ConsoleExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
@@ -26,7 +26,7 @@ test(function () {
 	/** @var Container $container */
 	$container = new $class;
 
-	Assert::count(0, $container->findByType(AbstractCommand::class));
+	Assert::count(0, $container->findByType(Command::class));
 });
 
 // 1 command of type FooCommand
@@ -47,8 +47,8 @@ test(function () {
 
 	Assert::type(Application::class, $container->getByType(Application::class));
 	Assert::true($container->isCreated('foo'));
-	Assert::count(1, $container->findByType(AbstractCommand::class));
-	Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
+	Assert::count(1, $container->findByType(Command::class));
+	Assert::type(FooCommand::class, $container->getByType(Command::class));
 });
 
 // 1 command of type FooCommand lazy-loading
@@ -69,6 +69,6 @@ test(function () {
 
 	Assert::type(Application::class, $container->getByType(Application::class));
 	Assert::false($container->isCreated('foo'));
-	Assert::count(1, $container->findByType(AbstractCommand::class));
-	Assert::type(FooCommand::class, $container->getByType(AbstractCommand::class));
+	Assert::count(1, $container->findByType(Command::class));
+	Assert::type(FooCommand::class, $container->getByType(Command::class));
 });

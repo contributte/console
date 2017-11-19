@@ -2,14 +2,14 @@
 
 namespace Tests\Fixtures;
 
-use Contributte\Console\Command\AbstractCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Milan Felix Sulc <sulcmil@gmail.com>
  */
-final class FooCommand extends AbstractCommand
+final class FooCommand extends Command
 {
 
 	/** @var string */

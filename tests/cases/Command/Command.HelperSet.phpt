@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Command\AbstractCommand.HelperSet
+ * Test: Command\Command.HelperSet
  */
 
 use Contributte\Console\DI\ConsoleExtension;
