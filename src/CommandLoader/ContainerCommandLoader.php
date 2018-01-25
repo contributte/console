@@ -57,7 +57,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	 */
 	public function getNames()
 	{
-		return array_values($this->commandMap);
+		return array_keys($this->commandMap);
 	}
 
 }
