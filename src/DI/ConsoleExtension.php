@@ -37,6 +37,7 @@ class ConsoleExtension extends CompilerExtension
 			ContainerHelper::class,
 		],
 		'lazy' => FALSE,
+        'cliOnly' => TRUE,
 	];
 
 	/**
@@ -46,11 +47,14 @@ class ConsoleExtension extends CompilerExtension
 	 */
 	public function loadConfiguration()
 	{
+		$config = $this->validateConfig($this->defaults);
+
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') return;
+        if (PHP_SAPI !== 'cli' && $config['cliOnly'] === TRUE) {
+            return;
+        }
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
 
 		Validators::assertField($config, 'helpers', 'array|null');
 
@@ -110,18 +114,23 @@ class ConsoleExtension extends CompilerExtension
 	 */
 	public function beforeCompile()
 	{
+		$config = $this->validateConfig($this->defaults);
+
 		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') return;
+        if (PHP_SAPI !== 'cli' && $config['cliOnly'] === TRUE) {
+            return;
+        }
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
 		$application = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL in CLI
-		if ($builder->hasDefinition('http.request') && $config['url'] !== NULL) {
-			$builder->getDefinition('http.request')
-				->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
-		}
+		if(PHP_SAPI === 'cli') {
+            if ($builder->hasDefinition('http.request') && $config['url'] !== NULL) {
+                $builder->getDefinition('http.request')
+                    ->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
+            }
+        }
 
 		// Register all commands (if they are not lazy-loaded)
 		// otherwise build a command map for command loader
