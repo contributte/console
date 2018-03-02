@@ -125,7 +125,7 @@ class ConsoleExtension extends CompilerExtension
 		$application = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL in CLI
-		if(PHP_SAPI === 'cli') {
+		if (PHP_SAPI === 'cli') {
             if ($builder->hasDefinition('http.request') && $config['url'] !== NULL) {
                 $builder->getDefinition('http.request')
                     ->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
