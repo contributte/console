@@ -1,13 +1,13 @@
 {
   "name": "contributte/console",
-  "description": "Best console to Nette Framework",
+  "description": "Best Symfony Console for Nette Framework",
   "keywords": ["nette", "symfony", "console"],
   "type": "library",
   "license": ["MIT"],
   "homepage": "https://github.com/contributte/console",
   "authors": [
     {
-      "name": "Milan Felix Sulc",
+      "name": "Milan Felix Šulc",
       "homepage": "https://f3l1x.io"
     }
   ],
@@ -16,10 +16,10 @@
     "symfony/console": "^3.2.0 || ^4.0.0"
   },
   "require-dev": {
-    "ninjify/qa": "~0.4.0",
-    "ninjify/nunjuck": "~0.2.0",
-    "nette/di": "~2.4.10",
-    "nette/http": "~2.4.7"
+    "ninjify/qa": "^0.4.0",
+    "ninjify/nunjuck": "^0.2.0",
+    "nette/di": "~2.4.11",
+    "nette/http": "~2.4.8"
   },
   "suggest": {
     "nette/di": "to use ConsoleExtension[CompilerExtension]"
