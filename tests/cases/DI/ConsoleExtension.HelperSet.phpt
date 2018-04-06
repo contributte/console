@@ -18,8 +18,8 @@ require_once __DIR__ . '/../../bootstrap.php';
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
-	}, [microtime(), 1]);
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+	}, [getmypid(), 1]);
 
 	/** @var Container $container */
 	$container = new $class;
@@ -33,12 +33,12 @@ test(function () {
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helperSet: Tests\Fixtures\FooHelperSet
 		', 'neon'));
-	}, [microtime(), 3]);
+	}, [getmypid(), 2]);
 
 	/** @var Container $container */
 	$container = new $class;
@@ -51,7 +51,7 @@ test(function () {
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helperSet: @Tests\Fixtures\FooHelperSet
@@ -59,7 +59,7 @@ test(function () {
 		services:
 			- Tests\Fixtures\FooHelperSet
 		', 'neon'));
-	}, [microtime(), 3]);
+	}, [getmypid(), 3]);
 
 	/** @var Container $container */
 	$container = new $class;
@@ -72,13 +72,13 @@ test(function () {
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helpers:
 				- Tests\Fixtures\FooHelper
 		', 'neon'));
-	}, [microtime(), 4]);
+	}, [getmypid(), 4]);
 
 	/** @var Container $container */
 	$container = new $class;

@@ -20,14 +20,14 @@ require_once __DIR__ . '/../../bootstrap.php';
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			lazy: off
 		services:
 			- Tests\Fixtures\HelperSetCommand
 		', 'neon'));
-	}, [microtime(), 2]);
+	}, [getmypid(), 1]);
 
 	/** @var Container $container */
 	$container = new $class;
