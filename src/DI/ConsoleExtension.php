@@ -154,12 +154,13 @@ class ConsoleExtension extends CompilerExtension
 
 				// Validate command name
 				if (!isset($entry['name'])) {
-					throw new ServiceCreationException(sprintf(
-						'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
-						$service->getEntity(),
-						self::COMMAND_TAG,
-						$service->getEntity()
-					));
+					throw new ServiceCreationException(
+						sprintf(
+							'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
+							$service->getEntity(),
+							self::COMMAND_TAG
+						)
+					);
 				}
 
 				// Append service to command map

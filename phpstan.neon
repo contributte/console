@@ -3,3 +3,5 @@ includes:
 	- temp/phpstan/vendor/phpstan/phpstan-nette/rules.neon
 
 parameters:
+	ignoreErrors:
+		- '#Accessing property $arguments on possibly null value of type Nette\DI\Statement|null#'
