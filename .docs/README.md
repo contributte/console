@@ -40,6 +40,8 @@ console:
     url: https://contributte.org
 ```
 
+### HelperSet
+
 You could also define you custom `helperSet` just in case. There are 2 possible approaches. You can register your
 `App\Model\MyCustomHelperSet` as services under `services` section or provide it directly to extesion config `helperSet`.
 
@@ -69,8 +71,10 @@ console:
       - App\Model\MyReallyGreatHelper
 ```
 
+### Lazy-loading
+
 From version 3.4 of Symfony\Console uses command lazy-loading. This extension fully supports this feature and
-you can enable it in NEON.
+you can enable it in NEON file.
 
 ```yaml
 console:
@@ -78,6 +82,24 @@ console:
 ```
 
 From this point, all commands are instanced only if needed. Don't forget, that listing all commands will instance all of them.
+
+How to define command names? Define `$defaultName` in command or via `console.command` tag on the service.
+
+```php
+class FooCommand extends Command
+{
+    public static $defaultName = 'app:foo';
+}
+```
+
+Or via service tag.
+
+```yaml
+services:
+    commands.foo:
+        class: App\FooCommand
+        tags: [console.command: app:foo]
+```
 
 ## Command
 
