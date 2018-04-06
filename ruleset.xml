@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="Contributte">
+    <!-- Extending rulesets -->
+    <rule ref="vendor/ninjify/coding-standard/ruleset.xml"/>
+    <!-- My rules -->
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array" value="
+                src=>Contributte\Console,
+                tests/fixtures=>Tests\Fixtures
+            "/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition">
+        <exclude name="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.assignmentInCondition"/>
+    </rule>
+
+    <!-- Exclude folders -->
+    <exclude-pattern>/tests/tmp</exclude-pattern>
+</ruleset>
