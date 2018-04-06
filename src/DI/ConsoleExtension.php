@@ -4,6 +4,7 @@ namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
+use Contributte\Console\Exception\Logical\InvalidArgumentException;
 use Contributte\Console\Helper\ContainerHelper;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
@@ -39,6 +40,21 @@ class ConsoleExtension extends CompilerExtension
 		'lazy' => FALSE,
 	];
 
+	/** @var bool */
+	private $cliMode;
+
+	/**
+	 * @param bool $cliMode
+	 */
+	public function __construct($cliMode = FALSE)
+	{
+		if (func_num_args() <= 0) {
+			throw new InvalidArgumentException(sprintf('Provide CLI mode, e.q. %s(%%consoleMode%%).', self::class));
+		}
+
+		$this->cliMode = $cliMode;
+	}
+
 	/**
 	 * Register services
 	 *
@@ -46,11 +62,11 @@ class ConsoleExtension extends CompilerExtension
 	 */
 	public function loadConfiguration()
 	{
-		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') return;
-
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
+
+		// Skip if isn't CLI
+		if ($this->cliMode !== TRUE) return;
 
 		Validators::assertField($config, 'helpers', 'array|null');
 
@@ -110,14 +126,15 @@ class ConsoleExtension extends CompilerExtension
 	 */
 	public function beforeCompile()
 	{
-		// Skip if it's not CLI mode
-		if (PHP_SAPI !== 'cli') return;
-
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
+
+		// Skip if isn't CLI
+		if ($this->cliMode !== TRUE) return;
+
 		$application = $builder->getDefinition($this->prefix('application'));
 
-		// Setup URL in CLI
+		// Setup URL for CLI
 		if ($builder->hasDefinition('http.request') && $config['url'] !== NULL) {
 			$builder->getDefinition('http.request')
 				->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);

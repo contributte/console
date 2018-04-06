@@ -2,9 +2,9 @@
 
 namespace Contributte\Console\CommandLoader;
 
+use Contributte\Console\Exception\Runtime\CommandNotFoundException;
 use Nette\DI\Container;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
 
 class ContainerCommandLoader implements CommandLoaderInterface
 {

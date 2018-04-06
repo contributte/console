@@ -17,22 +17,22 @@ use Tests\Fixtures\FooCommand;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-if (!class_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface')) {
-	Environment::skip('symfony/console 4.x is required');
+if (!interface_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface', TRUE)) {
+	Environment::skip('CommandLoaderInterface is available from symfony/console 3.4');
 }
 
 // 1 command of type FooCommand lazy-loading
 test(function () {
 	$loader = new ContainerLoader(TEMP_DIR, TRUE);
 	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension());
+		$compiler->addExtension('console', new ConsoleExtension(TRUE));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			lazy: on
 		services:
 			foo: Tests\Fixtures\FooCommand
 		', 'neon'));
-	}, [microtime(), 3]);
+	}, [getmypid(), 1]);
 
 	/** @var Container $container */
 	$container = new $class;

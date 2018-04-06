@@ -11,8 +11,7 @@
 
 ```yaml
 extensions:
-    console: Contributte\Console\DI\ConsoleExtension
-    
+    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%) 
 ```
 
 The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application. 
@@ -33,7 +32,7 @@ console:
       - Contributte\Console\Helper\ContainerHelper
 ```
 
-In fact in console mode / SAPI mode is no http request and thus no URL address. This inconvenience you have to solve by yoursolve.
+In fact in SAPI (CLI) mode there is no http request and thus no URL address. This inconvenience you have to solve by yourselve. Well, via `console.url` option.
  
 ```yaml
 console:
@@ -88,7 +87,7 @@ How to define command names? Define `$defaultName` in command or via `console.co
 ```php
 class FooCommand extends Command
 {
-    public static $defaultName = 'app:foo';
+    protected static $defaultName = 'app:foo';
 }
 ```
 
