@@ -1,0 +1,5 @@
+includes:
+	- temp/phpstan/vendor/phpstan/phpstan-nette/extension.neon
+	- temp/phpstan/vendor/phpstan/phpstan-nette/rules.neon
+
+parameters:
