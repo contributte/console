@@ -24,9 +24,10 @@ composer require contributte/console
 
 ## Versions
 
-| State       | Version  | Branch   | PHP      |
-|-------------|----------|----------|----------|
-| stable      | `^0.3.0` | `master` | `>= 5.6` |
+| State       | Version      | Branch   | PHP      |
+|-------------|--------------|----------|----------|
+| dev         | dev-master   | `master` | `>= 5.6` |
+| stable      | `^0.4.0`     | `master` | `>= 5.6` |
 
 ## Overview
 
