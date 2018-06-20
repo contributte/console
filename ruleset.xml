@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <ruleset name="Contributte">
-    <!-- Extending rulesets -->
-    <rule ref="vendor/ninjify/coding-standard/ruleset.xml"/>
+    <!-- Contributte Coding Standard -->
+	<rule ref="./vendor/ninjify/coding-standard/contributte.xml">
+		<exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators.DisallowedPostIncrementOperator"/>
+	</rule>
 
-    <!-- My rules -->
+    <!-- Specific rules -->
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <properties>
             <property name="rootNamespaces" type="array" value="
@@ -11,18 +13,6 @@
                 tests/fixtures=>Tests\Fixtures
             "/>
         </properties>
-    </rule>
-
-    <rule ref="Generic.WhiteSpace.ScopeIndent">
-        <properties>
-            <property name="indent" value="4"/>
-            <property name="tabIndent" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="Generic.WhiteSpace.DisallowSpaceIndent" />
-
-    <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition">
-        <exclude name="SlevomatCodingStandard.ControlStructures.AssignmentInCondition.assignmentInCondition"/>
     </rule>
 
     <!-- Exclude folders -->

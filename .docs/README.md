@@ -11,10 +11,10 @@
 
 ```yaml
 extensions:
-    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%) 
+    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 ```
 
-The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application. 
+The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application.
 That's all. You don't have to be worried about anything else.
 
 ## Configuration
@@ -33,7 +33,7 @@ console:
 ```
 
 In fact in SAPI (CLI) mode there is no http request and thus no URL address. This inconvenience you have to solve by yourselve. Well, via `console.url` option.
- 
+
 ```yaml
 console:
     url: https://contributte.org
@@ -85,6 +85,8 @@ From this point, all commands are instanced only if needed. Don't forget, that l
 How to define command names? Define `$defaultName` in command or via `console.command` tag on the service.
 
 ```php
+use Symfony\Component\Console\Command\Command;
+
 class FooCommand extends Command
 {
     protected static $defaultName = 'app:foo';
@@ -115,20 +117,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class FooCommand extends Command
 {
 
-	/**
-	 * @return void
-	 */
-	protected function configure()
+	protected function configure(): void
 	{
 		$this->setName('foo');
 	}
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return void
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): void
 	{
 		// Some magic..
 	}

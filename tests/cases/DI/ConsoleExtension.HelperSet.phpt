@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: DI\ConsoleExtension.HelperSet
@@ -15,14 +15,14 @@ use Tester\FileMock;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Default helperSet
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 	}, [getmypid(), 1]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	// 4 default helpers
 	// 1 container helper
@@ -30,10 +30,10 @@ test(function () {
 });
 
 // Own helperSet
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helperSet: Tests\Fixtures\FooHelperSet
@@ -41,17 +41,17 @@ test(function () {
 	}, [getmypid(), 2]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	// 1 container helper
 	Assert::count(1, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });
 
 // Own helperSet as service
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helperSet: @Tests\Fixtures\FooHelperSet
@@ -62,17 +62,17 @@ test(function () {
 	}, [getmypid(), 3]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	// 1 container helper
 	Assert::count(1, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });
 
 // Own helper
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helpers:
@@ -81,7 +81,7 @@ test(function () {
 	}, [getmypid(), 4]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	// 4 default helpers
 	// 1 container helper

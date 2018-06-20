@@ -26,7 +26,8 @@ composer require contributte/console
 
 | State       | Version      | Branch   | PHP      |
 |-------------|--------------|----------|----------|
-| dev         | dev-master   | `master` | `>= 5.6` |
+| dev         | `^0.6.0`     | `master` | `>= 7.1` |
+| stable      | `^0.5.0`     | `master` | `>= 7.1` |
 | stable      | `^0.4.0`     | `master` | `>= 5.6` |
 
 ## Overview
@@ -47,6 +48,13 @@ composer require contributte/console
         </a>
         </br>
         <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/mabar">
+            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=400&v=4">
+        </a>
+        </br>
+        <a href="https://github.com/mabar">Marek Bartoš</a>
       </td>
     </tr>
   <tbody>
