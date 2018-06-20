@@ -1,9 +1,8 @@
 language: php
+
 php:
-    - 5.6
-    - 7.0
-    - 7.1
-    - 7.2
+  - 7.1
+  - 7.2
 
 before_install:
   # turn off XDebug
@@ -19,13 +18,6 @@ script:
 
 jobs:
   include:
-    - env: title="Lowest Dependencies 5.6"
-      php: 5.6
-      install:
-        - travis_retry composer update --no-progress --prefer-dist --prefer-lowest
-      script:
-        - composer run-script tester
-
     - env: title="Lowest Dependencies 7.1"
       php: 7.1
       install:
@@ -33,28 +25,34 @@ jobs:
       script:
         - composer run-script tester
 
+    - env: title="Lowest Dependencies 7.2"
+      php: 7.2
+      install:
+        - travis_retry composer update --no-progress --prefer-dist --prefer-lowest
+      script:
+        - composer run-script tester
+
     - stage: Quality Assurance
-      php: 7.1
+      php: 7.2
       script:
         - composer run-script qa
 
     - stage: Test Coverage
-      php: 7.1
+      php: 7.2
       script:
         - composer run-script coverage
       after_script:
-        - wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+        - wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.0.0/php-coveralls.phar
         - php coveralls.phar --verbose --config tests/.coveralls.yml
 
     - stage: Phpstan
-      php: 7.1
+      php: 7.2
       script:
         - composer run-script phpstan-install
         - composer run-script phpstan
 
   allow_failures:
     - stage: Test Coverage
-    - stage: Phpstan
 
 after_failure:
   # Print *.actual content

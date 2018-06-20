@@ -1,26 +1,20 @@
 # EditorConfig is awesome: http://EditorConfig.org
 
-# Top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
 [*]
+charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-
-# JS / PHP
-[*.{js,php,phpt}]
-charset = utf-8
+trim_trailing_whitespace = true
 indent_style = tab
+indent_size = tab
+tab_width = 4
+
+[*.md]
+indent_style = space
 indent_size = 4
 
-# NEON
-[*.neon]
-charset = utf-8
-indent_style = tab
-indent_size = 4
-
-# Composer, NPM, Travis, BitbucketPipelines
-[{composer.json,package.json,.travis.yml,bitbucket-pipelines.yml}]
+[{composer.json,package.json,.travis.yml}]
 indent_style = space
 indent_size = 2

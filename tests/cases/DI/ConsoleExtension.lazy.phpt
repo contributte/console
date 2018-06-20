@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: DI\ConsoleExtension [lazy]
@@ -17,15 +17,15 @@ use Tests\Fixtures\FooCommand;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-if (!interface_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface', TRUE)) {
+if (!interface_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface', true)) {
 	Environment::skip('CommandLoaderInterface is available from symfony/console 3.4');
 }
 
 // 1 command of type FooCommand lazy-loading
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			lazy: on
@@ -35,7 +35,7 @@ test(function () {
 	}, [getmypid(), 1]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	Assert::type(Application::class, $container->getByType(Application::class));
 	Assert::false($container->isCreated('foo'));

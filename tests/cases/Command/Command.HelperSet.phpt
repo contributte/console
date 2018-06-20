@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Command\Command.HelperSet
@@ -17,10 +17,10 @@ use Tests\Fixtures\HelperSetCommand;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Test auto filling helperSet in command
-test(function () {
-	$loader = new ContainerLoader(TEMP_DIR, TRUE);
-	$class = $loader->load(function (Compiler $compiler) {
-		$compiler->addExtension('console', new ConsoleExtension(TRUE));
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
 			lazy: off
@@ -30,7 +30,7 @@ test(function () {
 	}, [getmypid(), 1]);
 
 	/** @var Container $container */
-	$container = new $class;
+	$container = new $class();
 
 	/** @var Application $application */
 	$application = $container->getByType(Application::class);
@@ -38,8 +38,8 @@ test(function () {
 	/** @var HelperSetCommand $command */
 	$command = $container->getByType(HelperSetCommand::class);
 
-	$application->setDefaultCommand($command->getName(), TRUE);
-	$application->setAutoExit(FALSE);
+	$application->setDefaultCommand($command->getName(), true);
+	$application->setAutoExit(false);
 	$application->run();
 
 	Assert::type(HelperSet::class, $command->getHelperSet());

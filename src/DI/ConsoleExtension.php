@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Console\DI;
 
@@ -18,35 +18,29 @@ use Nette\Utils\Validators;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
-/**
- * @author Milan Felix Sulc <sulcmil@gmail.com>
- */
 class ConsoleExtension extends CompilerExtension
 {
 
-	const COMMAND_TAG = 'console.command';
+	public const COMMAND_TAG = 'console.command';
 
-	/** @var array */
+	/** @var mixed[] */
 	private $defaults = [
-		'url' => NULL,
-		'name' => NULL,
-		'version' => NULL,
-		'catchExceptions' => NULL,
-		'autoExit' => NULL,
-		'helperSet' => NULL,
+		'url' => null,
+		'name' => null,
+		'version' => null,
+		'catchExceptions' => null,
+		'autoExit' => null,
+		'helperSet' => null,
 		'helpers' => [
 			ContainerHelper::class,
 		],
-		'lazy' => FALSE,
+		'lazy' => false,
 	];
 
 	/** @var bool */
 	private $cliMode;
 
-	/**
-	 * @param bool $cliMode
-	 */
-	public function __construct($cliMode = FALSE)
+	public function __construct(bool $cliMode = false)
 	{
 		if (func_num_args() <= 0) {
 			throw new InvalidArgumentException(sprintf('Provide CLI mode, e.q. %s(%%consoleMode%%).', self::class));
@@ -57,39 +51,38 @@ class ConsoleExtension extends CompilerExtension
 
 	/**
 	 * Register services
-	 *
-	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
 
 		// Skip if isn't CLI
-		if ($this->cliMode !== TRUE) return;
+		if ($this->cliMode !== true)
+			return;
 
 		Validators::assertField($config, 'helpers', 'array|null');
 
 		$application = $builder->addDefinition($this->prefix('application'))
 			->setClass(Application::class);
 
-		if ($config['name'] !== NULL) {
+		if ($config['name'] !== null) {
 			$application->addSetup('setName', [$config['name']]);
 		}
 
-		if ($config['version'] !== NULL) {
+		if ($config['version'] !== null) {
 			$application->addSetup('setVersion', [$config['version']]);
 		}
 
-		if ($config['catchExceptions'] !== NULL) {
+		if ($config['catchExceptions'] !== null) {
 			$application->addSetup('setCatchExceptions', [(bool) $config['catchExceptions']]);
 		}
 
-		if ($config['autoExit'] !== NULL) {
+		if ($config['autoExit'] !== null) {
 			$application->addSetup('setAutoExit', [(bool) $config['autoExit']]);
 		}
 
-		if ($config['helperSet'] !== NULL) {
+		if ($config['helperSet'] !== null) {
 			if (is_string($config['helperSet']) && Strings::startsWith($config['helperSet'], '@')) {
 				// Add already defined service
 				$application->addSetup('setHelperSet', [$config['helperSet']]);
@@ -110,7 +103,7 @@ class ConsoleExtension extends CompilerExtension
 			}
 		}
 
-		if ($config['lazy'] === TRUE) {
+		if ($config['lazy'] === true) {
 			$builder->addDefinition($this->prefix('commandLoader'))
 				->setClass(CommandLoaderInterface::class)
 				->setFactory(ContainerCommandLoader::class);
@@ -121,21 +114,20 @@ class ConsoleExtension extends CompilerExtension
 
 	/**
 	 * Decorate services
-	 *
-	 * @return void
 	 */
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
 
 		// Skip if isn't CLI
-		if ($this->cliMode !== TRUE) return;
+		if ($this->cliMode !== true)
+			return;
 
 		$application = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL for CLI
-		if ($builder->hasDefinition('http.request') && $config['url'] !== NULL) {
+		if ($builder->hasDefinition('http.request') && $config['url'] !== null) {
 			$builder->getDefinition('http.request')
 				->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
 		}
@@ -144,7 +136,7 @@ class ConsoleExtension extends CompilerExtension
 		// otherwise build a command map for command loader
 		$commands = $builder->findByType(Command::class);
 
-		if ($config['lazy'] === FALSE) {
+		if ($config['lazy'] === false) {
 			// Iterate over all commands and add to console
 			foreach ($commands as $serviceName => $service) {
 				$application->addSetup('add', [$service]);
@@ -155,14 +147,14 @@ class ConsoleExtension extends CompilerExtension
 			// Iterate over all commands and build commandMap
 			foreach ($commands as $serviceName => $service) {
 				$tags = $service->getTags();
-				$entry = ['name' => NULL, 'alias' => NULL];
+				$entry = ['name' => null, 'alias' => null];
 
 				if (isset($tags[self::COMMAND_TAG])) {
 					// Parse tag's name attribute
 					if (is_string($tags[self::COMMAND_TAG])) {
 						$entry['name'] = $tags[self::COMMAND_TAG];
-					} else if (is_array($tags[self::COMMAND_TAG])) {
-						$entry['name'] = Arrays::get($tags[self::COMMAND_TAG], 'name', NULL);
+					} elseif (is_array($tags[self::COMMAND_TAG])) {
+						$entry['name'] = Arrays::get($tags[self::COMMAND_TAG], 'name', null);
 					}
 				} else {
 					// Parse it from static property

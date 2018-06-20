@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Console\CommandLoader;
 
@@ -12,12 +12,11 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	/** @var Container */
 	private $container;
 
-	/** @var array */
-	private $commandMap = [];
+	/** @var string[] */
+	private $commandMap;
 
 	/**
-	 * @param Container $container
-	 * @param array $commandMap
+	 * @param string[] $commandMap
 	 */
 	public function __construct(Container $container, array $commandMap)
 	{
@@ -31,6 +30,8 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	 * @param string $name
 	 * @return object
 	 * @throws CommandNotFoundException
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint
 	 */
 	public function get($name)
 	{
@@ -45,9 +46,9 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	 * Checks if a command exists.
 	 *
 	 * @param string $name
-	 * @return bool
+	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
-	public function has($name)
+	public function has($name): bool
 	{
 		return array_key_exists($name, $this->commandMap);
 	}
@@ -55,7 +56,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	/**
 	 * @return string[] All registered command names
 	 */
-	public function getNames()
+	public function getNames(): array
 	{
 		return array_keys($this->commandMap);
 	}
