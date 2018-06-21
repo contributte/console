@@ -5,7 +5,6 @@ namespace Contributte\Console\DI;
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Exception\Logical\InvalidArgumentException;
-use Contributte\Console\Helper\ContainerHelper;
 use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
 use Nette\DI\ServiceCreationException;
@@ -31,9 +30,7 @@ class ConsoleExtension extends CompilerExtension
 		'catchExceptions' => null,
 		'autoExit' => null,
 		'helperSet' => null,
-		'helpers' => [
-			ContainerHelper::class,
-		],
+		'helpers' => [],
 		'lazy' => false,
 	];
 

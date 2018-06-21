@@ -11,6 +11,7 @@ use Nette\DI\ContainerLoader;
 use Symfony\Component\Console\Application;
 use Tester\Assert;
 use Tester\FileMock;
+use Tests\Fixtures\FooHelperSet;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
@@ -25,8 +26,7 @@ test(function (): void {
 	$container = new $class();
 
 	// 4 default helpers
-	// 1 container helper
-	Assert::count(5, $container->getByType(Application::class)->getHelperSet()->getIterator());
+	Assert::count(4, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });
 
 // Own helperSet
@@ -43,8 +43,8 @@ test(function (): void {
 	/** @var Container $container */
 	$container = new $class();
 
-	// 1 container helper
-	Assert::count(1, $container->getByType(Application::class)->getHelperSet()->getIterator());
+	// Our helper set
+	Assert::type(FooHelperSet::class, $container->getByType(Application::class)->getHelperSet());
 });
 
 // Own helperSet as service
@@ -64,8 +64,8 @@ test(function (): void {
 	/** @var Container $container */
 	$container = new $class();
 
-	// 1 container helper
-	Assert::count(1, $container->getByType(Application::class)->getHelperSet()->getIterator());
+	// Our helper set
+	Assert::type(FooHelperSet::class, $container->getByType(Application::class)->getHelperSet());
 });
 
 // Own helper
@@ -84,7 +84,6 @@ test(function (): void {
 	$container = new $class();
 
 	// 4 default helpers
-	// 1 container helper
 	// 1 foo helper
-	Assert::count(6, $container->getByType(Application::class)->getHelperSet()->getIterator());
+	Assert::count(5, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });
