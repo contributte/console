@@ -55,8 +55,7 @@ class ConsoleExtension extends CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		// Skip if isn't CLI
-		if ($this->cliMode !== true)
-			return;
+		if ($this->cliMode !== true) return;
 
 		Validators::assertField($config, 'helpers', 'array|null');
 
@@ -118,8 +117,7 @@ class ConsoleExtension extends CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		// Skip if isn't CLI
-		if ($this->cliMode !== true)
-			return;
+		if ($this->cliMode !== true) return;
 
 		$application = $builder->getDefinition($this->prefix('application'));
 
