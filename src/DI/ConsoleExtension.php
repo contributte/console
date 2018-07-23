@@ -124,7 +124,7 @@ class ConsoleExtension extends CompilerExtension
 		// Setup URL for CLI
 		if ($builder->hasDefinition('http.request') && $config['url'] !== null) {
 			$builder->getDefinition('http.request')
-				->setClass(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
+				->setFactory(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
 		}
 
 		// Register all commands (if they are not lazy-loaded)
