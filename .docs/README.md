@@ -28,8 +28,6 @@ console:
     url: https://contributte.com
     lazy: false
     helperSet: @customHelperSet
-    helpers:
-      - Contributte\Console\Helper\ContainerHelper
 ```
 
 In fact in SAPI (CLI) mode there is no http request and thus no URL address. This inconvenience you have to solve by yourselve. Well, via `console.url` option.
