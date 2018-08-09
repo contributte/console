@@ -43,7 +43,7 @@ jobs:
         - composer run-script coverage
       after_script:
         - wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.0.0/php-coveralls.phar
-        - php coveralls.phar --verbose --config tests/.coveralls.yml
+        - php php-coveralls.phar --verbose --config tests/.coveralls.yml
 
     - stage: Phpstan
       php: 7.2
