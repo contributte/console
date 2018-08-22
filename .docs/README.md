@@ -139,7 +139,7 @@ Maybe you will have to flush the `temp/cache` directory.
 
 ## Entrypoint
 
-The very last piece of the puzzle is the console entrypoit. It is a simple script that loads the DI container and fires  `Contributte\Console\Application::run`.
+The very last piece of the puzzle is the console entrypoint. It is a simple script that loads the DI container and fires  `Contributte\Console\Application::run`.
 
 You can copy & paste it to your project, for example to `<root>/bin/console`.
 
