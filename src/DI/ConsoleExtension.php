@@ -60,7 +60,7 @@ class ConsoleExtension extends CompilerExtension
 		Validators::assertField($config, 'helpers', 'array|null');
 
 		$application = $builder->addDefinition($this->prefix('application'))
-			->setClass(Application::class);
+			->setFactory(Application::class);
 
 		if ($config['name'] !== null) {
 			$application->addSetup('setName', [$config['name']]);
@@ -101,7 +101,7 @@ class ConsoleExtension extends CompilerExtension
 
 		if ($config['lazy'] === true) {
 			$builder->addDefinition($this->prefix('commandLoader'))
-				->setClass(CommandLoaderInterface::class)
+				->setType(CommandLoaderInterface::class)
 				->setFactory(ContainerCommandLoader::class);
 
 			$application->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
