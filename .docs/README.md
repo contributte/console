@@ -11,7 +11,7 @@
 
 ```yaml
 extensions:
-    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+    console: Contributte\Console\DI\ConsoleExtension
 ```
 
 The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application.

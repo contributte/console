@@ -6,7 +6,6 @@
 
 use Contributte\Console\Application;
 use Contributte\Console\DI\ConsoleExtension;
-use Contributte\Console\Exception\Logical\InvalidArgumentException;
 use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
@@ -69,11 +68,4 @@ test(function (): void {
 	$container = new $class();
 
 	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
-});
-
-// No CLI mode
-test(function (): void {
-	Assert::exception(function (): void {
-		new ConsoleExtension();
-	}, InvalidArgumentException::class, 'Provide CLI mode, e.q. Contributte\Console\DI\ConsoleExtension(%consoleMode%).');
 });
