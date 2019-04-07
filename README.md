@@ -10,7 +10,7 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 [![Downloads this Month](https://img.shields.io/packagist/dm/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
 [![Downloads total](https://img.shields.io/packagist/dt/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
 [![Latest stable](https://img.shields.io/packagist/v/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
+[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
 ## Discussion / Help
 
@@ -24,11 +24,10 @@ composer require contributte/console
 
 ## Versions
 
-| State       | Version      | Branch   | PHP      |
-|-------------|--------------|----------|----------|
-| dev         | `^0.6.0`     | `master` | `>= 7.1` |
-| stable      | `^0.5.0`     | `master` | `>= 7.1` |
-| stable      | `^0.4.0`     | `master` | `>= 5.6` |
+| State       | Version      | Branch   | Nette  | PHP    |
+|-------------|--------------|----------|--------|--------|
+| development | `^0.7.0`     | `master` | `3.0+` | `^7.2` |
+| stable      | `^0.6.0`     | `master` | `2.4`  | `^7.1` |
 
 ## Overview
 
