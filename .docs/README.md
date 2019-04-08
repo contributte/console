@@ -155,6 +155,6 @@ require __DIR__ . '/../vendor/autoload.php';
 
 App\Booting::boot()
     ->createContainer()
-    ->getByType(Nette\Application\Application::class)
+    ->getByType(Contributte\Console\Application::class)
     ->run();
 ```
