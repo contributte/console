@@ -149,12 +149,12 @@ Make sure to set it as executable. `chmod +x <root>/bin/console`.
 #!/usr/bin/env php
 <?php
 
-/** @var Nette\DI\Container $container */
-$container = require __DIR__ . '/../app/bootstrap.php';
+declare(strict_types=1);
 
-// Get application from DI container.
-$application = $container->getByType(Contributte\Console\Application::class);
+require __DIR__ . '/../vendor/autoload.php';
 
-// Run application.
-exit($application->run());
+App\Booting::boot()
+    ->createContainer()
+    ->getByType(Nette\Application\Application::class)
+    ->run();
 ```
