@@ -153,8 +153,8 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-App\Booting::boot()
+exit(App\Booting::boot()
     ->createContainer()
     ->getByType(Contributte\Console\Application::class)
-    ->run();
+    ->run());
 ```
