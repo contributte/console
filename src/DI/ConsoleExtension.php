@@ -49,7 +49,7 @@ class ConsoleExtension extends CompilerExtension
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::string(),
 			'helpers' => Expect::listOf('string'),
-			'lazy' => Expect::bool(true),
+			'lazy' => Expect::anyOf('smart', true, false)->default('smart'),
 		]);
 	}
 
@@ -115,7 +115,7 @@ class ConsoleExtension extends CompilerExtension
 			}
 		}
 
-		if ($config['lazy'] === true) {
+		if ($config['lazy'] === true || $config['lazy'] === 'smart') {
 			$builder->addDefinition($this->prefix('commandLoader'))
 				->setType(CommandLoaderInterface::class)
 				->setFactory(ContainerCommandLoader::class);
@@ -178,13 +178,18 @@ class ConsoleExtension extends CompilerExtension
 
 				// Validate command name
 				if (!isset($entry['name'])) {
-					throw new ServiceCreationException(
-						sprintf(
-							'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
-							$service->getType(),
-							self::COMMAND_TAG
-						)
-					);
+					if ($config['lazy'] === 'smart') {
+						$applicationDef->addSetup('add', [$service]);
+						continue;
+					} else {
+						throw new ServiceCreationException(
+							sprintf(
+								'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
+								$service->getType(),
+								self::COMMAND_TAG
+							)
+						);
+					}
 				}
 
 				// Append service to command map
