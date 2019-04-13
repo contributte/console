@@ -145,6 +145,8 @@ You can copy & paste it to your project, for example to `<root>/bin/console`.
 
 Make sure to set it as executable. `chmod +x <root>/bin/console`.
 
+##### If you are using Nette v3.x, use this script
+
 ```php
 #!/usr/bin/env php
 <?php
@@ -157,4 +159,20 @@ exit(App\Bootstrap::boot()
     ->createContainer()
     ->getByType(Contributte\Console\Application::class)
     ->run());
+```
+
+##### Use this script if you are using Nette v2.4 or lower
+
+```php
+#!/usr/bin/env php
+<?php
+
+/** @var Nette\DI\Container $container */
+$container = require __DIR__ . '/../app/bootstrap.php';
+
+// Get application from DI container.
+$application = $container->getByType(Contributte\Console\Application::class);
+
+// Run application.
+exit($application->run());
 ```
