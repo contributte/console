@@ -161,7 +161,7 @@ exit(App\Bootstrap::boot()
     ->run());
 ```
 
-##### Use this script if you are using Nette <= 2.4 or lower
+##### Use this script if you are using Nette <=2.4
 
 ```php
 #!/usr/bin/env php
