@@ -145,7 +145,7 @@ You can copy & paste it to your project, for example to `<root>/bin/console`.
 
 Make sure to set it as executable. `chmod +x <root>/bin/console`.
 
-##### If you are using Nette v3.x, use this script
+##### If you are using Nette 3.0+, use this script
 
 ```php
 #!/usr/bin/env php
@@ -161,7 +161,7 @@ exit(App\Bootstrap::boot()
     ->run());
 ```
 
-##### Use this script if you are using Nette v2.4 or lower
+##### Use this script if you are using Nette <= 2.4 or lower
 
 ```php
 #!/usr/bin/env php
