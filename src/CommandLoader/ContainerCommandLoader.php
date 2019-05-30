@@ -4,6 +4,7 @@ namespace Contributte\Console\CommandLoader;
 
 use Contributte\Console\Exception\Runtime\CommandNotFoundException;
 use Nette\DI\Container;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
 class ContainerCommandLoader implements CommandLoaderInterface
@@ -28,7 +29,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	 * Loads a command.
 	 *
 	 * @param string $name
-	 * @return object
+	 * @return Command
 	 * @throws CommandNotFoundException
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint

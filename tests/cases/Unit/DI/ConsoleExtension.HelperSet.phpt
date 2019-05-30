@@ -1,24 +1,21 @@
 <?php declare(strict_types = 1);
 
 /**
- * Test: DI\ConsoleExtension
+ * Test: DI\ConsoleExtension.HelperSet
  */
 
-use Contributte\Console\Application;
 use Contributte\Console\DI\ConsoleExtension;
-use Contributte\Console\Exception\Logical\InvalidArgumentException;
-use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Application;
 use Tester\Assert;
 use Tester\FileMock;
-use Tests\Fixtures\FooCommand;
+use Tests\Fixtures\FooHelperSet;
 
-require_once __DIR__ . '/../../bootstrap.php';
+require_once __DIR__ . '/../../../bootstrap.php';
 
-// No commands
+// Default helperSet
 test(function (): void {
 	$loader = new ContainerLoader(TEMP_DIR, true);
 	$class = $loader->load(function (Compiler $compiler): void {
@@ -28,52 +25,65 @@ test(function (): void {
 	/** @var Container $container */
 	$container = new $class();
 
-	Assert::count(0, $container->findByType(Command::class));
+	// 4 default helpers
+	Assert::count(4, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });
 
-// 1 command of type FooCommand
+// Own helperSet
 test(function (): void {
 	$loader = new ContainerLoader(TEMP_DIR, true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: off
-		services:
-			foo: Tests\Fixtures\FooCommand
+			helperSet: Tests\Fixtures\FooHelperSet
 		', 'neon'));
 	}, [getmypid(), 2]);
 
 	/** @var Container $container */
 	$container = new $class();
 
-	Assert::type(Application::class, $container->getByType(Application::class));
-	Assert::true($container->isCreated('foo'));
-	Assert::count(1, $container->findByType(Command::class));
-	Assert::type(FooCommand::class, $container->getByType(Command::class));
+	// Our helper set
+	Assert::type(FooHelperSet::class, $container->getByType(Application::class)->getHelperSet());
 });
 
-// Provide URL
+// Own helperSet as service
 test(function (): void {
 	$loader = new ContainerLoader(TEMP_DIR, true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
-		$compiler->addExtension('http', new HttpExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			url: https://contributte.org/
+			helperSet: @Tests\Fixtures\FooHelperSet
+			
+		services:
+			- Tests\Fixtures\FooHelperSet
 		', 'neon'));
 	}, [getmypid(), 3]);
 
 	/** @var Container $container */
 	$container = new $class();
 
-	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
+	// Our helper set
+	Assert::type(FooHelperSet::class, $container->getByType(Application::class)->getHelperSet());
 });
 
-// No CLI mode
+// Own helper
 test(function (): void {
-	Assert::exception(function (): void {
-		new ConsoleExtension();
-	}, InvalidArgumentException::class, 'Provide CLI mode, e.q. Contributte\Console\DI\ConsoleExtension(%consoleMode%).');
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+			helpers:
+				- Tests\Fixtures\FooHelper
+		', 'neon'));
+	}, [getmypid(), 4]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	// 4 default helpers
+	// 1 foo helper
+	Assert::count(5, $container->getByType(Application::class)->getHelperSet()->getIterator());
 });

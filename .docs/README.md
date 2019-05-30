@@ -145,16 +145,27 @@ You can copy & paste it to your project, for example to `<root>/bin/console`.
 
 Make sure to set it as executable. `chmod +x <root>/bin/console`.
 
+##### Nette 3.0+
+
 ```php
 #!/usr/bin/env php
-<?php
+<?php declare(strict_types=1);
 
-/** @var Nette\DI\Container $container */
+require __DIR__ . '/../vendor/autoload.php';
+
+exit(App\Bootstrap::boot()
+    ->createContainer()
+    ->getByType(Contributte\Console\Application::class)
+    ->run());
+```
+
+##### Nette <= 2.4
+
+```php
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
 $container = require __DIR__ . '/../app/bootstrap.php';
 
-// Get application from DI container.
-$application = $container->getByType(Contributte\Console\Application::class);
-
-// Run application.
-exit($application->run());
+exit($container->getByType(Contributte\Console\Application::class)->run());
 ```

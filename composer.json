@@ -16,23 +16,22 @@
     }
   ],
   "require": {
-    "php": ">= 7.1",
-    "symfony/console": "^4.0.0"
+    "php": "^7.2",
+    "symfony/console": "^4.2.9"
   },
   "require-dev": {
-    "ninjify/qa": "^0.8.0",
-    "ninjify/nunjuck": "^0.2.0",
-    "nette/di": "~2.4.11",
-    "nette/http": "~2.4.8"
+    "ninjify/qa": "^0.9.0",
+    "ninjify/nunjuck": "^0.3.0",
+    "nette/di": "~3.0.0",
+    "nette/http": "~3.0.1",
+    "phpstan/phpstan-shim": "^0.11.8",
+    "phpstan/phpstan-deprecation-rules": "^0.11.2",
+    "phpstan/phpstan-nette": "^0.11.1",
+    "phpstan/phpstan-strict-rules": "^0.11.1"
   },
   "suggest": {
     "nette/di": "to use ConsoleExtension[CompilerExtension]"
   },
-  "conflict": {
-    "nette/utils": "<2.5.2"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
   "autoload": {
     "psr-4": {
       "Contributte\\Console\\": "src"
@@ -40,34 +39,18 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Tests\\Cases\\": "tests/cases",
       "Tests\\Fixtures\\": "tests/fixtures"
     }
   },
-  "scripts": {
-    "qa": [
-      "linter src tests",
-      "codesniffer src tests"
-    ],
-    "tests": [
-      "tester -s -p php --colors 1 -C tests/cases"
-    ],
-    "coverage": [
-      "tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src tests/cases"
-    ],
-    "phpstan-install": [
-      "mkdir -p temp/phpstan",
-      "composer require -d temp/phpstan phpstan/phpstan:^0.10",
-      "composer require -d temp/phpstan phpstan/phpstan-deprecation-rules:^0.10",
-      "composer require -d temp/phpstan phpstan/phpstan-nette:^0.10",
-      "composer require -d temp/phpstan phpstan/phpstan-strict-rules:^0.10"
-    ],
-    "phpstan": [
-      "temp/phpstan/vendor/bin/phpstan analyse -l max -c phpstan.neon src"
-    ]
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.6.x-dev"
+      "dev-master": "0.7.x-dev"
     }
   }
 }

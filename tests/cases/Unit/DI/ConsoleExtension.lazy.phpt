@@ -11,15 +11,10 @@ use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
 use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
-use Tester\Environment;
 use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
 
-require_once __DIR__ . '/../../bootstrap.php';
-
-if (!interface_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface', true)) {
-	Environment::skip('CommandLoaderInterface is available from symfony/console 3.4');
-}
+require_once __DIR__ . '/../../../bootstrap.php';
 
 // 1 command of type FooCommand lazy-loading
 test(function (): void {
