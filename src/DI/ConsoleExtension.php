@@ -5,34 +5,27 @@ namespace Contributte\Console\DI;
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Exception\Logical\InvalidArgumentException;
-use Nette\DI\Compiler;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\DI\ServiceCreationException;
-use Nette\DI\Statement;
 use Nette\Http\Request;
 use Nette\Http\UrlScript;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use Nette\Utils\Arrays;
 use Nette\Utils\Strings;
-use Nette\Utils\Validators;
+use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 
+/**
+ * @property-read stdClass $config
+ */
 class ConsoleExtension extends CompilerExtension
 {
 
 	public const COMMAND_TAG = 'console.command';
-
-	/** @var mixed[] */
-	private $defaults = [
-		'url' => null,
-		'name' => null,
-		'version' => null,
-		'catchExceptions' => null,
-		'autoExit' => null,
-		'helperSet' => null,
-		'helpers' => [],
-		'lazy' => false,
-	];
 
 	/** @var bool */
 	private $cliMode;
@@ -46,18 +39,32 @@ class ConsoleExtension extends CompilerExtension
 		$this->cliMode = $cliMode;
 	}
 
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'url' => Expect::string(),
+			'name' => Expect::string(),
+			'version' => Expect::string(),
+			'catchExceptions' => Expect::bool(),
+			'autoExit' => Expect::bool(),
+			'helperSet' => Expect::string(),
+			'helpers' => Expect::listOf('string'),
+			'lazy' => Expect::bool(true),
+		]);
+	}
+
 	/**
 	 * Register services
 	 */
 	public function loadConfiguration(): void
 	{
-		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
-
 		// Skip if isn't CLI
-		if ($this->cliMode !== true) return;
+		if ($this->cliMode !== true) {
+			return;
+		}
 
-		Validators::assertField($config, 'helpers', 'array|null');
+		$builder = $this->getContainerBuilder();
+		$config = (array) $this->config;
 
 		$application = $builder->addDefinition($this->prefix('application'))
 			->setFactory(Application::class);
@@ -82,20 +89,29 @@ class ConsoleExtension extends CompilerExtension
 			if (is_string($config['helperSet']) && Strings::startsWith($config['helperSet'], '@')) {
 				// Add already defined service
 				$application->addSetup('setHelperSet', [$config['helperSet']]);
-			} else {
+			} elseif (is_string($config['helperSet'])) {
 				// Parse service definition
-				$helperSetDef = $builder->addDefinition($this->prefix('helperSet'));
-				Compiler::loadDefinition($helperSetDef, $config['helperSet']);
+				$helperSetDef = $builder->addDefinition($this->prefix('helperSet'))
+					->setFactory($config['helperSet']);
 				$application->addSetup('setHelperSet', [$helperSetDef]);
+			} else {
+				throw new ServiceCreationException(sprintf('Unsupported definition of helperSet'));
 			}
 		}
 
-		if (is_array($config['helpers'])) {
-			$helpers = 1;
-			foreach ($config['helpers'] as $helper) {
-				$helperDef = $builder->addDefinition($this->prefix('helper.' . $helpers++));
-				Compiler::loadDefinition($helperDef, $helper);
-				$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helperDef]));
+		if ($config['helpers']) {
+			foreach ($config['helpers'] as $n => $helper) {
+				if (is_string($helper) && Strings::startsWith($helper, '@')) {
+					// Add already defined service
+					$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helper]));
+				} elseif (is_string($helper)) {
+					// Parse service definition
+					$helperDef = $builder->addDefinition($this->prefix('helperSet'))
+						->setFactory($helper);
+					$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helperDef]));
+				} else {
+					throw new ServiceCreationException(sprintf('Unsupported definition of helper'));
+				}
 			}
 		}
 
@@ -113,18 +129,22 @@ class ConsoleExtension extends CompilerExtension
 	 */
 	public function beforeCompile(): void
 	{
-		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
-
 		// Skip if isn't CLI
-		if ($this->cliMode !== true) return;
+		if ($this->cliMode !== true) {
+			return;
+		}
 
-		$application = $builder->getDefinition($this->prefix('application'));
+		$builder = $this->getContainerBuilder();
+		$config = (array) $this->config;
+
+		/** @var ServiceDefinition $applicationDef */
+		$applicationDef = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL for CLI
 		if ($builder->hasDefinition('http.request') && $config['url'] !== null) {
-			$builder->getDefinition('http.request')
-				->setFactory(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
+			/** @var ServiceDefinition $httpDef */
+			$httpDef = $builder->getDefinition('http.request');
+			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
 		}
 
 		// Register all commands (if they are not lazy-loaded)
@@ -134,7 +154,7 @@ class ConsoleExtension extends CompilerExtension
 		if ($config['lazy'] === false) {
 			// Iterate over all commands and add to console
 			foreach ($commands as $serviceName => $service) {
-				$application->addSetup('add', [$service]);
+				$applicationDef->addSetup('add', [$service]);
 			}
 		} else {
 			$commandMap = [];
@@ -153,7 +173,7 @@ class ConsoleExtension extends CompilerExtension
 					}
 				} else {
 					// Parse it from static property
-					$entry['name'] = call_user_func([$service->getEntity(), 'getDefaultName']);
+					$entry['name'] = call_user_func([$service->getType(), 'getDefaultName']);
 				}
 
 				// Validate command name
@@ -161,7 +181,7 @@ class ConsoleExtension extends CompilerExtension
 					throw new ServiceCreationException(
 						sprintf(
 							'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
-							$service->getEntity(),
+							$service->getType(),
 							self::COMMAND_TAG
 						)
 					);
@@ -171,8 +191,9 @@ class ConsoleExtension extends CompilerExtension
 				$commandMap[$entry['name']] = $serviceName;
 			}
 
-			$builder->getDefinition($this->prefix('commandLoader'))
-				->getFactory()->arguments = ['@container', $commandMap];
+			/** @var ServiceDefinition $commandLoaderDef */
+			$commandLoaderDef = $builder->getDefinition($this->prefix('commandLoader'));
+			$commandLoaderDef->getFactory()->arguments = ['@container', $commandMap];
 		}
 	}
 
