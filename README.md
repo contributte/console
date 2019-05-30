@@ -27,7 +27,7 @@ composer require contributte/console
 | State       | Version      | Branch   | Nette  | PHP    |
 |-------------|--------------|----------|--------|--------|
 | development | `^0.7.0`     | `master` | `3.0+` | `^7.2` |
-| stable      | `^0.6.0`     | `master` | `2.4`  | `^7.1` |
+| stable      | `^0.6.0`     | `master` | `2.4`  | `^7.2` |
 
 ## Overview
 
