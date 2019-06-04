@@ -8,6 +8,7 @@ use Contributte\Console\Exception\Logical\InvalidArgumentException;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\MissingServiceException;
 use Nette\DI\ServiceCreationException;
 use Nette\Http\Request;
 use Nette\Http\UrlScript;
@@ -18,6 +19,7 @@ use Nette\Utils\Strings;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property-read stdClass $config
@@ -194,6 +196,14 @@ class ConsoleExtension extends CompilerExtension
 			/** @var ServiceDefinition $commandLoaderDef */
 			$commandLoaderDef = $builder->getDefinition($this->prefix('commandLoader'));
 			$commandLoaderDef->getFactory()->arguments = ['@container', $commandMap];
+		}
+
+		// Register event dispatcher, if available
+		try {
+			$dispatcherDef = $builder->getDefinitionByType(EventDispatcherInterface::class);
+			$applicationDef->addSetup('setDispatcher', [$dispatcherDef]);
+		} catch (MissingServiceException $e) {
+			// Event dispatcher is not installed, ignore
 		}
 	}
 
