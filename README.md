@@ -2,8 +2,6 @@
 
 Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implementation for [`Nette Framework`](https://github.com/nette/).
 
------
-
 [![Build Status](https://img.shields.io/travis/contributte/console.svg?style=flat-square)](https://travis-ci.org/contributte/console)
 [![Code coverage](https://img.shields.io/coveralls/contributte/console.svg?style=flat-square)](https://coveralls.io/r/contributte/console)
 [![Licence](https://img.shields.io/packagist/l/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
@@ -16,25 +14,21 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 
 [![Join the chat](https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square)](http://bit.ly/ctteg)
 
-## Install
+## Documentation
 
-```
-composer require contributte/console
-```
+- [Setup](.docs/README.md#setup)
+- [Configuration](.docs/README.md#configuration)
+- [Example command](.docs/README.md#command)
+- [Entrypoint](.docs/README.md#entrypoint)
 
 ## Versions
 
-| State       | Version      | Branch   | Nette  | PHP    |
-|-------------|--------------|----------|--------|--------|
-| development | `^0.7.0`     | `master` | `3.0+` | `^7.2` |
-| stable      | `^0.6.0`     | `master` | `2.4`  | `^7.2` |
-
-## Overview
-
-- [Usage - how to register](https://github.com/contributte/console/blob/master/.docs/README.md#usage)
-- [Configuration - how to configure](https://github.com/contributte/console/blob/master/.docs/README.md#configuration)
-- [Command - example command](https://github.com/contributte/console/blob/master/.docs/README.md#command)
-- [Entrypoint - console script](https://github.com/contributte/console/blob/master/.docs/README.md#entrypoint)
+| State  | Version      | Branch   | Nette  | PHP     |
+|--------|--------------|----------|--------|---------|
+| dev    | `^0.7.0`     | `master` | `3.0+` | `^7.2`  |
+| stable | `^0.6.0`     | `master` | `3.0+` | `^7.2`  |
+| stable | `^0.5.0`     | `master` | `2.4`  | `>=7.1` |
+| stable | `^0.4.0`     | `master` | `2.4`  | `>=5.6` |
 
 ## Maintainers
 
@@ -58,7 +52,5 @@ composer require contributte/console
     </tr>
   </tbody>
 </table>
-
------
 
 Thank you for testing, reporting and contributing.

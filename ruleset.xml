@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Contributte">
-
+<ruleset>
 	<!-- Contributte Coding Standard -->
 	<rule ref="./vendor/ninjify/coding-standard/contributte.xml">
 		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing"/>

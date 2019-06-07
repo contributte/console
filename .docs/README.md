@@ -2,12 +2,16 @@
 
 ## Content
 
-- [Usage - how to register](#usage)
-- [Configuration - how to configure](#configuration)
-- [Command - example command](#command)
-- [Entrypoint - console script](#entrypoint)
+- [Setup](#usage)
+- [Configuration](#configuration)
+- [Example command](#command)
+- [Entrypoint](#entrypoint)
 
-## Usage
+## Setup
+
+```bash
+composer require contributte/console
+```
 
 ```yaml
 extensions:
@@ -149,7 +153,7 @@ Make sure to set it as executable. `chmod +x <root>/bin/console`.
 
 ```php
 #!/usr/bin/env php
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -163,7 +167,7 @@ exit(App\Bootstrap::boot()
 
 ```php
 #!/usr/bin/env php
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 $container = require __DIR__ . '/../app/bootstrap.php';
 
