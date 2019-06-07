@@ -26,7 +26,7 @@ That's all. You don't have to worry about anything else.
 ```yaml
 console:
     name: Acme Project
-    version: 1.0
+    version: '1.0'
     catchExceptions: true / false
     autoExit: true / false
     url: https://contributte.com
