@@ -66,63 +66,57 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = (array) $this->config;
+		$config = $this->config;
 
-		$application = $builder->addDefinition($this->prefix('application'))
+		$applicationDef = $builder->addDefinition($this->prefix('application'))
 			->setFactory(Application::class);
 
-		if ($config['name'] !== null) {
-			$application->addSetup('setName', [$config['name']]);
+		if ($config->name !== null) {
+			$applicationDef->addSetup('setName', [$config->name]);
 		}
 
-		if ($config['version'] !== null) {
-			$application->addSetup('setVersion', [$config['version']]);
+		if ($config->version !== null) {
+			$applicationDef->addSetup('setVersion', [$config->version]);
 		}
 
-		if ($config['catchExceptions'] !== null) {
-			$application->addSetup('setCatchExceptions', [(bool) $config['catchExceptions']]);
+		if ($config->catchExceptions !== null) {
+			$applicationDef->addSetup('setCatchExceptions', [$config->catchExceptions]);
 		}
 
-		if ($config['autoExit'] !== null) {
-			$application->addSetup('setAutoExit', [(bool) $config['autoExit']]);
+		if ($config->autoExit !== null) {
+			$applicationDef->addSetup('setAutoExit', [$config->autoExit]);
 		}
 
-		if ($config['helperSet'] !== null) {
-			if (is_string($config['helperSet']) && Strings::startsWith($config['helperSet'], '@')) {
+		if ($config->helperSet !== null) {
+			if (Strings::startsWith($config->helperSet, '@')) {
 				// Add already defined service
-				$application->addSetup('setHelperSet', [$config['helperSet']]);
-			} elseif (is_string($config['helperSet'])) {
+				$applicationDef->addSetup('setHelperSet', [$config->helperSet]);
+			} else {
 				// Parse service definition
 				$helperSetDef = $builder->addDefinition($this->prefix('helperSet'))
-					->setFactory($config['helperSet']);
-				$application->addSetup('setHelperSet', [$helperSetDef]);
+					->setFactory($config->helperSet);
+				$applicationDef->addSetup('setHelperSet', [$helperSetDef]);
+			}
+		}
+
+		foreach ($config->helpers as $helperConfig) {
+			if (Strings::startsWith($helperConfig, '@')) {
+				// Add already defined service
+				$applicationDef->addSetup(new Statement('?->getHelperSet()->set(?)', ['@self', $helperConfig]));
 			} else {
-				throw new ServiceCreationException(sprintf('Unsupported definition of helperSet'));
+				// Parse service definition
+				$helperDef = $builder->addDefinition($this->prefix('helperSet'))
+					->setFactory($helperConfig);
+				$applicationDef->addSetup(new Statement('?->getHelperSet()->set(?)', ['@self', $helperDef]));
 			}
 		}
 
-		if ($config['helpers']) {
-			foreach ($config['helpers'] as $n => $helper) {
-				if (is_string($helper) && Strings::startsWith($helper, '@')) {
-					// Add already defined service
-					$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helper]));
-				} elseif (is_string($helper)) {
-					// Parse service definition
-					$helperDef = $builder->addDefinition($this->prefix('helperSet'))
-						->setFactory($helper);
-					$application->addSetup(new Statement('$service->getHelperSet()->set(?)', [$helperDef]));
-				} else {
-					throw new ServiceCreationException(sprintf('Unsupported definition of helper'));
-				}
-			}
-		}
-
-		if ($config['lazy'] === true) {
+		if ($config->lazy) {
 			$builder->addDefinition($this->prefix('commandLoader'))
 				->setType(CommandLoaderInterface::class)
 				->setFactory(ContainerCommandLoader::class);
 
-			$application->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
+			$applicationDef->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
 		}
 	}
 
@@ -137,23 +131,23 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = (array) $this->config;
+		$config = $this->config;
 
 		/** @var ServiceDefinition $applicationDef */
 		$applicationDef = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL for CLI
-		if ($builder->hasDefinition('http.request') && $config['url'] !== null) {
+		if ($config->url !== null && $builder->hasDefinition('http.request')) {
 			/** @var ServiceDefinition $httpDef */
 			$httpDef = $builder->getDefinition('http.request');
-			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config['url']])]);
+			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
 		}
 
 		// Register all commands (if they are not lazy-loaded)
 		// otherwise build a command map for command loader
 		$commands = $builder->findByType(Command::class);
 
-		if ($config['lazy'] === false) {
+		if (!$config->lazy) {
 			// Iterate over all commands and add to console
 			foreach ($commands as $serviceName => $service) {
 				$applicationDef->addSetup('add', [$service]);
