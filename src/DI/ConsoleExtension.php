@@ -46,7 +46,7 @@ class ConsoleExtension extends CompilerExtension
 		return Expect::structure([
 			'url' => Expect::string(),
 			'name' => Expect::string(),
-			'version' => Expect::string(),
+			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::string(),
@@ -76,7 +76,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		if ($config->version !== null) {
-			$applicationDef->addSetup('setVersion', [$config->version]);
+			$applicationDef->addSetup('setVersion', [(string) $config->version]);
 		}
 
 		if ($config->catchExceptions !== null) {
