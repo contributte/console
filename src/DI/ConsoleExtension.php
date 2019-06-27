@@ -5,7 +5,9 @@ namespace Contributte\Console\DI;
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Exception\Logical\InvalidArgumentException;
+use Contributte\DI\Helper\ExtensionDefinitionsHelper;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
@@ -15,7 +17,6 @@ use Nette\Http\UrlScript;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nette\Utils\Arrays;
-use Nette\Utils\Strings;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
@@ -49,8 +50,10 @@ class ConsoleExtension extends CompilerExtension
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),
-			'helperSet' => Expect::string(),
-			'helpers' => Expect::listOf('string'),
+			'helperSet' => Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class)),
+			'helpers' => Expect::arrayOf(
+				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
+			),
 			'lazy' => Expect::bool(true),
 		]);
 	}
@@ -67,6 +70,7 @@ class ConsoleExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
+		$definitionsHelper = new ExtensionDefinitionsHelper($this->compiler);
 
 		$applicationDef = $builder->addDefinition($this->prefix('application'))
 			->setFactory(Application::class);
@@ -88,27 +92,26 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		if ($config->helperSet !== null) {
-			if (Strings::startsWith($config->helperSet, '@')) {
-				// Add already defined service
-				$applicationDef->addSetup('setHelperSet', [$config->helperSet]);
-			} else {
-				// Parse service definition
-				$helperSetDef = $builder->addDefinition($this->prefix('helperSet'))
-					->setFactory($config->helperSet);
-				$applicationDef->addSetup('setHelperSet', [$helperSetDef]);
+			$helperSetConfig = $config->helperSet;
+			$helperSetPrefix = $this->prefix('helperSet');
+			$helperSetDef = $definitionsHelper->getDefinitionFromConfig($helperSetConfig, $helperSetPrefix);
+
+			if ($helperSetDef instanceof Definition) {
+				$helperSetDef->setAutowired(false);
 			}
+
+			$applicationDef->addSetup('setHelperSet', [$helperSetDef]);
 		}
 
-		foreach ($config->helpers as $helperConfig) {
-			if (Strings::startsWith($helperConfig, '@')) {
-				// Add already defined service
-				$applicationDef->addSetup(new Statement('?->getHelperSet()->set(?)', ['@self', $helperConfig]));
-			} else {
-				// Parse service definition
-				$helperDef = $builder->addDefinition($this->prefix('helperSet'))
-					->setFactory($helperConfig);
-				$applicationDef->addSetup(new Statement('?->getHelperSet()->set(?)', ['@self', $helperDef]));
+		foreach ($config->helpers as $helperName => $helperConfig) {
+			$helperPrefix = $this->prefix('helper.' . $helperName);
+			$helperDef = $definitionsHelper->getDefinitionFromConfig($helperConfig, $helperPrefix);
+
+			if ($helperDef instanceof Definition) {
+				$helperDef->setAutowired(false);
 			}
+
+			$applicationDef->addSetup('?->getHelperSet()->set(?)', ['@self', $helperDef]);
 		}
 
 		if ($config->lazy) {
