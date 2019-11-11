@@ -8,6 +8,7 @@ use Contributte\Console\DI\ConsoleExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Nette\DI\InvalidConfigurationException;
 use Symfony\Component\Console\Application;
 use Tester\Assert;
 use Tester\FileMock;
@@ -86,4 +87,18 @@ test(function (): void {
 	// 4 default helpers
 	// 1 foo helper
 	Assert::count(5, $container->getByType(Application::class)->getHelperSet()->getIterator());
+});
+
+// Null helperSet
+test(function (): void {
+	Assert::exception(function (): void {
+		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader->load(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->loadConfig(FileMock::create('
+		console:
+			helperSet: null
+		', 'neon'));
+		}, [getmypid(), 5]);
+	}, InvalidConfigurationException::class, "The option 'console › helperSet' expects to be string|Nette\DI\Definitions\Statement, null given.");
 });
