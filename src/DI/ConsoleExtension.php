@@ -16,6 +16,7 @@ use Nette\Http\Request;
 use Nette\Http\UrlScript;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Nette\Schema\ValidationException;
 use Nette\Utils\Arrays;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
@@ -50,7 +51,14 @@ class ConsoleExtension extends CompilerExtension
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),
-			'helperSet' => Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class)),
+			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class))
+				->assert(function ($helperSet) {
+					if ($helperSet === null) {
+						throw new ValidationException('helperSet cannot be null');
+					}
+
+					return true;
+				}),
 			'helpers' => Expect::arrayOf(
 				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
 			),
@@ -70,42 +78,43 @@ class ConsoleExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 		$config = $this->config;
-		$definitionsHelper = new ExtensionDefinitionsHelper($this->compiler);
+		$defhelp = new ExtensionDefinitionsHelper($this->compiler);
 
+		// Register Symfony Console Application
 		$applicationDef = $builder->addDefinition($this->prefix('application'))
 			->setFactory(Application::class);
 
+		// Setup console name
 		if ($config->name !== null) {
 			$applicationDef->addSetup('setName', [$config->name]);
 		}
 
+		// Setup console version
 		if ($config->version !== null) {
 			$applicationDef->addSetup('setVersion', [(string) $config->version]);
 		}
 
+		// Catch or populate exceptions
 		if ($config->catchExceptions !== null) {
 			$applicationDef->addSetup('setCatchExceptions', [$config->catchExceptions]);
 		}
 
+		// Call die() or not
 		if ($config->autoExit !== null) {
 			$applicationDef->addSetup('setAutoExit', [$config->autoExit]);
 		}
 
+		// Register given or default HelperSet
 		if ($config->helperSet !== null) {
-			$helperSetConfig = $config->helperSet;
-			$helperSetPrefix = $this->prefix('helperSet');
-			$helperSetDef = $definitionsHelper->getDefinitionFromConfig($helperSetConfig, $helperSetPrefix);
-
-			if ($helperSetDef instanceof Definition) {
-				$helperSetDef->setAutowired(false);
-			}
-
-			$applicationDef->addSetup('setHelperSet', [$helperSetDef]);
+			$applicationDef->addSetup('setHelperSet', [
+				$defhelp->getDefinitionFromConfig($config->helperSet, $this->prefix('helperSet')),
+			]);
 		}
 
+		// Register extra helpers
 		foreach ($config->helpers as $helperName => $helperConfig) {
 			$helperPrefix = $this->prefix('helper.' . $helperName);
-			$helperDef = $definitionsHelper->getDefinitionFromConfig($helperConfig, $helperPrefix);
+			$helperDef = $defhelp->getDefinitionFromConfig($helperConfig, $helperPrefix);
 
 			if ($helperDef instanceof Definition) {
 				$helperDef->setAutowired(false);
@@ -114,6 +123,7 @@ class ConsoleExtension extends CompilerExtension
 			$applicationDef->addSetup('?->getHelperSet()->set(?)', ['@self', $helperDef]);
 		}
 
+		// Commands lazy loading
 		if ($config->lazy) {
 			$builder->addDefinition($this->prefix('commandLoader'))
 				->setType(CommandLoaderInterface::class)

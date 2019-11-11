@@ -31,7 +31,6 @@ console:
     autoExit: true / false
     url: https://contributte.com
     lazy: false
-    helperSet: @customHelperSet
 ```
 
 In SAPI (CLI) mode there is no http request and thus no URL address. This is an inconvenience you have to solve by yourself - via the `console.url` option.
@@ -41,7 +40,7 @@ console:
     url: https://contributte.org
 ```
 
-### HelperSet
+### Helpers
 
 You could also define you custom `helperSet` just in case. There are 2 possible approaches. You can register your
 `App\Model\MyCustomHelperSet` as a service under the `services` section or provide it directly to the extension config `helperSet`.
@@ -63,8 +62,7 @@ console:
     helperSet: App\Model\MyCustomHelperSet
 ```
 
-By default, helperSet contains 5 helpers - 4 defined in `Symfony\Component\Console\Application` and 1 defined
-by the extension itself. You can add more helpers, if needed.
+By default, helperSet contains 4 helpers defined in `Symfony\Component\Console\Application`. You can add more helpers, if need them.
 
 ```yaml
 console:
