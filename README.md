@@ -10,6 +10,8 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 [![Latest stable](https://img.shields.io/packagist/v/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
 
+![](https://github.com/contributte/console/blob/master/.docs/assets/console.png "Console")
+
 ## Discussion / Help
 
 [![Join the chat](https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square)](http://bit.ly/ctteg)
