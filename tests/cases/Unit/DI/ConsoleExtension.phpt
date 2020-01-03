@@ -38,7 +38,7 @@ test(function (): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: off
+			lazy: false
 		services:
 			foo: Tests\Fixtures\FooCommand
 		', 'neon'));
