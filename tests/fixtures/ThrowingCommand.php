@@ -23,7 +23,7 @@ final class ThrowingCommand extends Command
 		$this->setName(self::$defaultName);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): void
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		throw new Exception(self::ERROR_MESSAGE);
 	}

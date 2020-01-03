@@ -17,9 +17,9 @@ final class HelperSetCommand extends Command
 		$this->setName('helper-set');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): void
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		// Some magic..
+		return 0;
 	}
 
 }
