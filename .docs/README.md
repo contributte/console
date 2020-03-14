@@ -31,6 +31,7 @@ console:
     autoExit: true / false
     url: https://contributte.com
     lazy: false
+    applicationClass: Project\Console\Application
 ```
 
 In SAPI (CLI) mode there is no http request and thus no URL address. This is an inconvenience you have to solve by yourself - via the `console.url` option.
