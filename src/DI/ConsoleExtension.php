@@ -63,6 +63,7 @@ class ConsoleExtension extends CompilerExtension
 				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
 			),
 			'lazy' => Expect::bool(true),
+			'applicationClass' => Expect::string(Application::class),
 		]);
 	}
 
@@ -82,7 +83,7 @@ class ConsoleExtension extends CompilerExtension
 
 		// Register Symfony Console Application
 		$applicationDef = $builder->addDefinition($this->prefix('application'))
-			->setFactory(Application::class);
+			->setFactory($config->applicationClass);
 
 		// Setup console name
 		if ($config->name !== null) {
