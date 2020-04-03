@@ -27,8 +27,8 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 
 | State  | Version      | Branch   | Nette  | PHP     |
 |--------|--------------|----------|--------|---------|
-| dev    | `^0.9.0`     | `master` | `3.0+` | `^7.2`  |
-| stable | `^0.8.0`     | `master` | `3.0+` | `^7.2`  |
+| dev    | `^0.9.0`     | `master` | `3.0+` | `>=7.2` |
+| stable | `^0.8.0`     | `master` | `3.0+` | `>=7.2` |
 | stable | `^0.5.0`     | `master` | `2.4`  | `>=7.1` |
 | stable | `^0.4.0`     | `master` | `2.4`  | `>=5.6` |
 
