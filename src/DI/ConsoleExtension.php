@@ -153,7 +153,9 @@ class ConsoleExtension extends CompilerExtension
 		if ($config->url !== null && $builder->hasDefinition('http.request')) {
 			/** @var ServiceDefinition $httpDef */
 			$httpDef = $builder->getDefinition('http.request');
-			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
+			if ($httpDef->getFactory() === Request::class) {
+				$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
+			}
 		}
 
 		// Register all commands (if they are not lazy-loaded)
