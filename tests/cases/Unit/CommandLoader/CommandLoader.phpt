@@ -8,13 +8,8 @@ use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Exception\Runtime\CommandNotFoundException;
 use Nette\DI\Container;
 use Tester\Assert;
-use Tester\Environment;
 
 require_once __DIR__ . '/../../../bootstrap.php';
-
-if (!interface_exists('Symfony\Component\Console\CommandLoader\CommandLoaderInterface', true)) {
-	Environment::skip('CommandLoaderInterface is available from symfony/console 3.4');
-}
 
 // Empty loader
 test(function (): void {

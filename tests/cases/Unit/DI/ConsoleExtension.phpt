@@ -11,6 +11,8 @@ use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Nette\DI\MissingServiceException;
+use Nette\DI\ServiceCreationException;
 use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
 use Tester\FileMock;
@@ -71,9 +73,96 @@ test(function (): void {
 	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
 });
 
-// No CLI mode
+// No mode provided
 test(function (): void {
 	Assert::exception(function (): void {
 		new ConsoleExtension();
 	}, InvalidArgumentException::class, 'Provide CLI mode, e.q. Contributte\Console\DI\ConsoleExtension(%consoleMode%).');
+});
+
+// Non-CLI mode
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(false));
+	}, [getmypid(), 4]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	Assert::exception(static function () use ($container): void {
+		$container->getByType(Application::class);
+	}, MissingServiceException::class);
+});
+
+// Config
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+			name: Hello world
+			version: 1.0.0
+			catchExceptions: false
+			autoExit: false
+		', 'neon'));
+	}, [getmypid(), 5]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::type(Application::class, $application);
+	Assert::same('Hello world', $application->getName());
+	Assert::same('1.0.0', $application->getVersion());
+	Assert::false($application->areExceptionsCaught());
+	Assert::false($application->isAutoExitEnabled());
+});
+
+// Lazy commands
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+			lazy: true
+		services:
+			defaultName: Tests\Fixtures\FooCommand
+			tagNameString:
+				factory: Tests\Fixtures\FooCommand
+				tags: [console.command: bar]
+			tagNameArray:
+				factory: Tests\Fixtures\FooCommand
+				tags: [console.command: [name: baz]]
+		', 'neon'));
+	}, [getmypid(), 6]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::type(Application::class, $application);
+	Assert::false($container->isCreated('defaultName'));
+	Assert::count(3, $container->findByType(Command::class));
+	Assert::true($application->has('app:foo'));
+	Assert::true($application->has('bar'));
+	Assert::true($application->has('baz'));
+});
+
+// Invalid command
+test(function (): void {
+	Assert::exception(function (): void {
+		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader->load(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->loadConfig(FileMock::create('
+			console:
+				lazy: true
+			services:
+				noName: Tests\Fixtures\NoNameCommand
+		', 'neon'));
+		}, [getmypid(), 7]);
+	}, ServiceCreationException::class, 'Command "Tests\Fixtures\NoNameCommand" missing tag "console.command[name]" or variable "$defaultName".');
 });
