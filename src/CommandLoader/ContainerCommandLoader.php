@@ -29,12 +29,10 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	 * Loads a command.
 	 *
 	 * @param string $name
-	 * @return Command
 	 * @throws CommandNotFoundException
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint
 	 */
-	public function get($name)
+	public function get($name): Command
 	{
 		if (!$this->has($name)) {
 			throw new CommandNotFoundException(sprintf('Command "%s" does not exist.', $name));
