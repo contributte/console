@@ -2,7 +2,7 @@ includes:
 	- vendor/phpstan/phpstan/conf/bleedingEdge.neon
 
 parameters:
-	tmpDir: %currentWorkingDirectory%/var/tmp/PHPStan
+	tmpDir: %currentWorkingDirectory%/tmp/PHPStan
 
 	ignoreErrors:
 		- '#^Parameter \#1 \$function of function call_user_func expects callable\(\): mixed, array\(string\|null, .+\) given.$#'

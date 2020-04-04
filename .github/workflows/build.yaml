@@ -1,0 +1,163 @@
+name: "build"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "master"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
+
+jobs:
+  qa:
+    name: "Quality Assurance"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        php-version: ["7.4"]
+        operating-system: ["ubuntu-latest"]
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2.0.0"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@1.8.2"
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: ""
+
+      - name: "Validate Composer"
+        run: "composer validate"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v1.1.2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-"
+
+      - name: "Install dependencies"
+        run: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable"
+
+      - name: "Coding Standard"
+        run: "make cs"
+
+      - name: "PHPStan"
+        run: "make phpstan"
+
+  tests:
+    name: "Tests"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        php-version: ["7.2", "7.3", "7.4"]
+        operating-system: ["ubuntu-latest", "macos-latest"]
+
+      fail-fast: false
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2.0.0"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@1.8.2"
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: ""
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v1.1.2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-"
+
+      - name: "Install dependencies"
+        run: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable"
+
+      - name: "Tests"
+        run: "make tests"
+
+  tests-lowest-dependencies:
+    name: "Tests with lowest dependencies"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        php-version: ["7.2"]
+        operating-system: ["ubuntu-latest", "macos-latest"]
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2.0.0"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@1.8.2"
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+          extensions: ""
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v1.1.2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-"
+
+      - name: "Install dependencies"
+        run: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable --prefer-lowest"
+
+      - name: "Tests"
+        run: "make tests"
+
+  tests-code-coverage:
+    name: "Tests with code coverage"
+
+    runs-on: "${{ matrix.operating-system }}"
+
+    strategy:
+      matrix:
+        php-version: ["7.4"]
+        operating-system: ["ubuntu-latest"]
+
+    if: "github.ref == 'master' && github.event_name == 'push'"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2.0.0"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@1.8.2"
+        with:
+          coverage: "pcov"
+          php-version: "${{ matrix.php_version }}"
+          extensions: ""
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v1.1.2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-"
+
+      - name: "Install dependencies"
+        run: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable"
+
+      - name: "Tests"
+        run: "make coverage-clover"
+
+      - name: "Coveralls.io"
+        env:
+          COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
+        run: |
+          wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.1.0/php-coveralls.phar
+          php php-coveralls.phar --verbose --config tests/.coveralls.yml
