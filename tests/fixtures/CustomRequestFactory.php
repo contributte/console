@@ -16,4 +16,9 @@ class CustomRequestFactory extends RequestFactory
 		return new Request(new UrlScript(self::CUSTOM_URL));
 	}
 
+	public function createHttpRequest(): Request
+	{
+		return $this->fromGlobals();
+	}
+
 }

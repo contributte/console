@@ -23,4 +23,10 @@ class ConsoleRequestFactory extends RequestFactory
 		return new Request(new UrlScript($this->url));
 	}
 
+
+	public function createHttpRequest(): Request
+	{
+		return $this->fromGlobals();
+	}
+
 }
