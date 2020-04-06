@@ -12,8 +12,6 @@ use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
 use Nette\DI\ServiceCreationException;
-use Nette\Http\Request;
-use Nette\Http\UrlScript;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nette\Schema\ValidationException;
@@ -150,12 +148,10 @@ class ConsoleExtension extends CompilerExtension
 		$applicationDef = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL for CLI
-		if ($config->url !== null && $builder->hasDefinition('http.request')) {
+		if ($config->url !== null && $builder->hasDefinition('http.requestFactory')) {
 			/** @var ServiceDefinition $httpDef */
-			$httpDef = $builder->getDefinition('http.request');
-			if ($httpDef->getFactory() === Request::class) {
-				$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
-			}
+			$httpDef = $builder->getDefinition('http.requestFactory');
+			$httpDef->setFactory(RequestFactory::class, [$config->url]);
 		}
 
 		// Register all commands (if they are not lazy-loaded)
