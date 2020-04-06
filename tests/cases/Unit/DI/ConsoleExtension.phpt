@@ -14,6 +14,7 @@ use Nette\DI\ContainerLoader;
 use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
 use Tester\FileMock;
+use Tests\Fixtures\CustomRequestFactory;
 use Tests\Fixtures\FooCommand;
 
 require_once __DIR__ . '/../../../bootstrap.php';
@@ -53,7 +54,7 @@ test(function (): void {
 	Assert::type(FooCommand::class, $container->getByType(Command::class));
 });
 
-// Provide URL
+// Provide URL using default request factory
 test(function (): void {
 	$loader = new ContainerLoader(TEMP_DIR, true);
 	$class = $loader->load(function (Compiler $compiler): void {
@@ -70,6 +71,43 @@ test(function (): void {
 
 	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
 });
+
+// Use custom request Factory
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->addExtension('http', new HttpExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		services:
+			http.requestFactory:  Tests\Fixtures\CustomRequestFactory
+		', 'neon'));
+	}, [getmypid(), 4]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	Assert::equal(CustomRequestFactory::CUSTOM_URL, (string) $container->getService('http.request')->getUrl());
+});
+
+// Throw error on custom factory and console.url set
+test(function (): void {
+	Assert::exception(function (): void {
+		$loader = new ContainerLoader(TEMP_DIR, true);
+		$class = $loader->load(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->addExtension('http', new HttpExtension(true));
+			$compiler->loadConfig(FileMock::create('
+		services:
+			http.requestFactory:  Tests\Fixtures\CustomRequestFactory
+		console:
+			url: https://contributte.org/
+		', 'neon'));
+		}, [getmypid(), 5]);
+		new $class();
+	}, InvalidArgumentException::class, 'Custom http.requestFactory is used, argument console.url should be removed.');
+});
+
 
 // No CLI mode
 test(function (): void {

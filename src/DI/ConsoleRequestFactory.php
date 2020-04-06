@@ -3,9 +3,10 @@
 namespace Contributte\Console\DI;
 
 use Nette\Http\Request;
+use Nette\Http\RequestFactory;
 use Nette\Http\UrlScript;
 
-class RequestFactory extends \Nette\Http\RequestFactory
+class ConsoleRequestFactory extends RequestFactory
 {
 
 	/** @var string */

@@ -12,6 +12,7 @@ use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
 use Nette\DI\ServiceCreationException;
+use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nette\Schema\ValidationException;
@@ -151,7 +152,14 @@ class ConsoleExtension extends CompilerExtension
 		if ($config->url !== null && $builder->hasDefinition('http.requestFactory')) {
 			/** @var ServiceDefinition $httpDef */
 			$httpDef = $builder->getDefinition('http.requestFactory');
-			$httpDef->setFactory(RequestFactory::class, [$config->url]);
+			$factoryEntity = $httpDef->getFactory()->getEntity();
+			if ($factoryEntity === RequestFactory::class) {
+				$httpDef->setFactory(ConsoleRequestFactory::class, [$config->url]);
+			} else {
+				throw new InvalidArgumentException(
+					'Custom http.requestFactory is used, argument console.url should be removed.'
+				);
+			}
 		}
 
 		// Register all commands (if they are not lazy-loaded)
