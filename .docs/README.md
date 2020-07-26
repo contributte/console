@@ -171,3 +171,17 @@ $container = require __DIR__ . '/../app/bootstrap.php';
 
 exit($container->getByType(Contributte\Console\Application::class)->run());
 ```
+
+## Problems
+Have you created your project based on nette/web-project and encountered the following error?
+
+![](https://github.com/contributte/console/blob/master/.docs/assets/service_not_found_exception.png "Service not found")
+
+Solution is to add the class `Contributte\Console\Application` to the list od exported types in section `di.export` in your `common.neon` configuration file.
+```yaml
+di:
+    export:
+        types:
+            - Contributte\Console\Application
+```
+You can also remove the option `types:`  from your `common.neon` configuration file, but that will increase the size of your DI container.
