@@ -1,27 +1,35 @@
-# Console
+<h1 align=center>Contributte Console</h1>
 
-Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implementation for [`Nette Framework`](https://github.com/nette/).
+<p align=center>
+    Ultra easy-to-use <a href="https://github.com/symfony/console"><code>Symfony\Console</code></a> implementation for <a href="https://github.com/nette/"><code>Nette Framework</code></a>.
+</p>
 
-[![Build Status](https://img.shields.io/travis/contributte/console.svg?style=flat-square)](https://travis-ci.org/contributte/console)
-[![Code coverage](https://img.shields.io/coveralls/contributte/console.svg?style=flat-square)](https://coveralls.io/r/contributte/console)
-[![Licence](https://img.shields.io/packagist/l/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
-[![Downloads this Month](https://img.shields.io/packagist/dm/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
-[![Downloads total](https://img.shields.io/packagist/dt/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
-[![Latest stable](https://img.shields.io/packagist/v/contributte/console.svg?style=flat-square)](https://packagist.org/packages/contributte/console)
-[![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square)](https://github.com/phpstan/phpstan)
+<p align=center>
+  <a href="https://travis-ci.org/contributte/console"><img src="https://img.shields.io/travis/contributte/console.svg?style=flat-square"></a>
+  <a href="https://coveralls.io/r/contributte/console"><img src="https://img.shields.io/coveralls/contributte/console.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/contributte/console"><img src="https://img.shields.io/packagist/l/contributte/console.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/contributte/console"><img src="https://img.shields.io/packagist/dm/contributte/console.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/contributte/console"><img src="https://img.shields.io/packagist/dt/contributte/console.svg?style=flat-square"></a>
+  <a href="https://packagist.org/packages/contributte/console"><img src="https://img.shields.io/packagist/v/contributte/console.svg?style=flat-square"></a>
+  <a href="https://github.com/phpstan/phpstan"><img src="https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat-square"></a>
+  <a href="http://bit.ly/ctteg"><img src="https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square"></a>
+<p>
 
-![](https://github.com/contributte/console/blob/master/.docs/assets/console.png "Console")
+<p align=center>
+    Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
+</p>
 
-## Discussion / Help
+## Usage
 
-[![Join the chat](https://img.shields.io/gitter/room/contributte/contributte.svg?style=flat-square)](http://bit.ly/ctteg)
+To install the latest version of `contributte/console` use [Composer](https://getcomposer.com).
+
+```
+composer require contributte/console
+```
 
 ## Documentation
 
-- [Setup](.docs/README.md#setup)
-- [Configuration](.docs/README.md#configuration)
-- [Example command](.docs/README.md#command)
-- [Entrypoint](.docs/README.md#entrypoint)
+For details on how to use this package, check out our [documentation](.docs/README.md).
 
 ## Versions
 
@@ -32,27 +40,20 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 | stable | `^0.5.0`     | `master` | `2.4`  | `>=7.1` |
 | stable | `^0.4.0`     | `master` | `2.4`  | `>=5.6` |
 
-## Maintainers
+## Development
 
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/f3l1x">
-            <img width="150" height="150" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=150">
-        </a>
-        </br>
-        <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/mabar">
-            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=150&v=4">
-        </a>
-        </br>
-        <a href="https://github.com/mabar">Marek Bartoš</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+See [how to contribute](https://contributte.org/contributing.html) to this package.
 
-Thank you for testing, reporting and contributing.
+This package is currently maintaining by these authors.
+
+<a href="https://github.com/f3l1x">
+    <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
+</a>
+<a href="https://github.com/mabar">
+    <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/20974277?v=3&s=80">
+</a>
+
+-----
+
+Consider to [support](https://contributte.org/partners.html) **contributte** development team.
+Also thank you for using this package.
