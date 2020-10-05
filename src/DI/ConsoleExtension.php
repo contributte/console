@@ -52,7 +52,7 @@ class ConsoleExtension extends CompilerExtension
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class))
-				->assert(function ($helperSet) {
+				->assert(function ($helperSet): bool {
 					if ($helperSet === null) {
 						throw new ValidationException('helperSet cannot be null');
 					}

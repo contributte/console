@@ -23,12 +23,12 @@
   "require-dev": {
     "nette/http": "~3.0.1",
     "ninjify/nunjuck": "^0.3.0",
-    "ninjify/qa": "^0.10.0",
+    "ninjify/qa": "^0.11",
     "phpstan/extension-installer": "^1.0",
-    "phpstan/phpstan-deprecation-rules": "^0.11.2",
-    "phpstan/phpstan-nette": "^0.11.1",
-    "phpstan/phpstan-shim": "^0.11.8",
-    "phpstan/phpstan-strict-rules": "^0.11.1",
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-deprecation-rules": "^0.12",
+    "phpstan/phpstan-nette": "^0.12",
+    "phpstan/phpstan-strict-rules": "^0.12",
     "symfony/event-dispatcher": "^4.0.0"
   },
   "autoload": {
