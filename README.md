@@ -27,7 +27,7 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
 
 | State  | Version      | Branch   | Nette  | PHP     |
 |--------|--------------|----------|--------|---------|
-| dev    | `^0.9.0`     | `master` | `3.0+` | `^7.2`  |
+| dev    | `^0.9.0`     | `master` | `3.0+` | `>=7.2`  |
 | stable | `^0.8.0`     | `master` | `3.0+` | `^7.2`  |
 | stable | `^0.5.0`     | `master` | `2.4`  | `>=7.1` |
 | stable | `^0.4.0`     | `master` | `2.4`  | `>=5.6` |
@@ -43,13 +43,6 @@ Ultra easy-to-use [`Symfony\Console`](https://github.com/symfony/console) implem
         </a>
         </br>
         <a href="https://github.com/f3l1x">Milan Felix Šulc</a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/mabar">
-            <img width="150" height="150" src="https://avatars0.githubusercontent.com/u/20974277?s=150&v=4">
-        </a>
-        </br>
-        <a href="https://github.com/mabar">Marek Bartoš</a>
       </td>
     </tr>
   </tbody>
