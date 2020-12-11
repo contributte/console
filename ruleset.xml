@@ -1,20 +1,16 @@
 <?xml version="1.0"?>
 <ruleset>
 	<!-- Contributte Coding Standard -->
-	<rule ref="./vendor/ninjify/coding-standard/contributte.xml">
-		<exclude name="SlevomatCodingStandard.ControlStructures.ControlStructureSpacing"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
-		<exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
-	</rule>
+	<rule ref="./vendor/ninjify/coding-standard/contributte.xml"/>
 
 	<!-- Specific rules -->
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
-			<property name="rootNamespaces" type="array" value="
-				src=>Contributte\Console,
-				tests/cases=>Tests\Cases,
-				tests/fixtures=>Tests\Fixtures
-			"/>
+			<property name="rootNamespaces" type="array">
+				<element key="src" value="Contributte\Console"/>
+				<element key="tests/cases" value="Tests\Cases"/>
+				<element key="tests/fixtures" value="Tests\Fixtures"/>
+			</property>
 		</properties>
 	</rule>
 
