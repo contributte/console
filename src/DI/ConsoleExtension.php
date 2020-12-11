@@ -16,7 +16,6 @@ use Nette\Http\Request;
 use Nette\Http\UrlScript;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Schema\ValidationException;
 use Nette\Utils\Arrays;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
@@ -51,14 +50,7 @@ class ConsoleExtension extends CompilerExtension
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),
-			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class))
-				->assert(function ($helperSet): bool {
-					if ($helperSet === null) {
-						throw new ValidationException('helperSet cannot be null');
-					}
-
-					return true;
-				}),
+			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
 			'helpers' => Expect::arrayOf(
 				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
 			),
