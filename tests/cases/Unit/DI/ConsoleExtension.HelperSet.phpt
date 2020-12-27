@@ -56,7 +56,7 @@ test(function (): void {
 		$compiler->loadConfig(FileMock::create('
 		console:
 			helperSet: @Tests\Fixtures\FooHelperSet
-			
+
 		services:
 			- Tests\Fixtures\FooHelperSet
 		', 'neon'));
@@ -100,5 +100,5 @@ test(function (): void {
 			helperSet: null
 		', 'neon'));
 		}, [getmypid(), 5]);
-	}, InvalidConfigurationException::class, "The option 'console › helperSet' expects to be string|Nette\DI\Definitions\Statement, null given.");
+	}, InvalidConfigurationException::class, "The item 'console › helperSet' expects to be string|Nette\DI\Definitions\Statement, null given.");
 });
