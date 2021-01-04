@@ -15,6 +15,7 @@ env:
   cache-version: "1"
   composer-version: "v1"
   composer-install: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable"
+  coverage: "none"
 
 jobs:
   qa:
@@ -51,7 +52,8 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.extensions }}"
-          tools: "composer:${{ env.composer-version }} "
+          tools: "composer:${{ env.composer-version }}, cs2pr"
+          coverage: "${{ env.coverage }}"
 
       - name: "Setup problem matchers for PHP"
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
@@ -110,7 +112,8 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.extensions }}"
-          tools: "composer:${{ env.composer-version }} "
+          tools: "composer:${{ env.composer-version }}"
+          coverage: "${{ env.coverage }}"
 
       - name: "Setup problem matchers for PHP"
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
@@ -142,12 +145,12 @@ jobs:
         operating-system: ["ubuntu-latest"]
         composer-args: [ "" ]
         include:
-          - php-version: "7.4"
+          - php-version: "7.2"
             operating-system: "ubuntu-latest"
             composer-args: "--prefer-lowest"
           - php-version: "8.0"
             operating-system: "ubuntu-latest"
-            composer-args: "--ignore-platform-reqs"
+            composer-args: ""
       fail-fast: false
 
     continue-on-error: "${{ matrix.php-version == '8.0' }}"
@@ -176,7 +179,8 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.extensions }}"
-          tools: "composer:${{ env.composer-version }} "
+          tools: "composer:${{ env.composer-version }}"
+          coverage: "${{ env.coverage }}"
 
       - name: "Setup problem matchers for PHP"
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
@@ -195,11 +199,15 @@ jobs:
       - name: "Install dependencies"
         run: "${{ env.composer-install }} ${{ matrix.composer-args }}"
 
-      - name: "Setup problem matchers for PHPUnit"
-        run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
-
       - name: "Tests"
         run: "make tests"
+
+      - name: "Upload test output"
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: tests/**/output
 
   tests-code-coverage:
     name: "Tests with code coverage"
@@ -237,7 +245,8 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           extensions: "${{ env.extensions }}"
-          tools: "composer:${{ env.composer-version }} "
+          tools: "composer:${{ env.composer-version }}"
+          coverage: "${{ env.coverage }}"
 
       - name: "Setup problem matchers for PHP"
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/php.json"'
@@ -258,6 +267,13 @@ jobs:
 
       - name: "Tests"
         run: "make coverage-clover"
+
+      - name: "Upload test output"
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: tests/**/output
 
       - name: "Coveralls.io"
         env:
