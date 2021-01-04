@@ -18,7 +18,7 @@ use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
 
-require_once __DIR__ . '/../../../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 // No commands
 test(function (): void {

@@ -14,7 +14,7 @@ use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\FooHelperSet;
 
-require_once __DIR__ . '/../../../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 // Default helperSet
 test(function (): void {

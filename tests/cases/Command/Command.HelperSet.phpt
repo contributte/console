@@ -14,7 +14,7 @@ use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\HelperSetCommand;
 
-require_once __DIR__ . '/../../../bootstrap.php';
+require_once __DIR__ . '/../../bootstrap.php';
 
 // Test auto filling helperSet in command
 test(function (): void {
