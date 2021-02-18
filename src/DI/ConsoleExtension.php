@@ -123,6 +123,9 @@ class ConsoleExtension extends CompilerExtension
 
 			$applicationDef->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
 		}
+
+		// Export types
+		$this->compiler->addExportedType(Application::class);
 	}
 
 	/**

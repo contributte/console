@@ -11,6 +11,7 @@ use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
+use Nette\DI\Extensions\DIExtension;
 use Nette\DI\MissingServiceException;
 use Nette\DI\ServiceCreationException;
 use Symfony\Component\Console\Command\Command;
@@ -165,4 +166,24 @@ test(function (): void {
 		', 'neon'));
 		}, [getmypid(), 7]);
 	}, ServiceCreationException::class, 'Command "Tests\Fixtures\NoNameCommand" missing tag "console.command[name]" or variable "$defaultName".');
+});
+
+// Always exported
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->addExtension('di', new DIExtension());
+		$compiler->loadConfig(FileMock::create('
+		di:
+			export:
+				types: null
+		', 'neon'));
+	}, [getmypid(), 8]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::type(Application::class, $application);
 });
