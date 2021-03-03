@@ -24,10 +24,10 @@ Website ðŸš€ <a href="https://contributte.org">contributte.org</a> | Contact ðŸ‘
 
 ## Usage
 
-To install latest version of `contributte/console` use [Composer](https://getcomposer.com).
+To install latest version of `contributte/console` use [Composer](https://getcomposer.org).
 
 ```
-composer require contributte/console
+$ composer require contributte/console
 ```
 
 ## Documentation
@@ -53,5 +53,5 @@ See [how to contribute](https://contributte.org) to this package. This package i
 
 -----
 
-Consider to [support](https://contributte.com/partners) **contributte** development team.
+Consider to [support](https://contributte.org/partners) **contributte** development team.
 Also thank you for using this package.
