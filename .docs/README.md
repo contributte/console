@@ -29,7 +29,7 @@ console:
     version: '1.0'
     catchExceptions: true / false
     autoExit: true / false
-    url: https://contributte.com
+    url: https://contributte.org
     lazy: false
 ```
 
