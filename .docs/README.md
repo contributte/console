@@ -132,7 +132,7 @@ final class FooCommand extends Command
 
 ### Register command
 
-```yml
+```yaml
 services:
     - App\Console\FooCommand
 ```
