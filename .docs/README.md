@@ -13,9 +13,9 @@
 composer require contributte/console
 ```
 
-```yaml
+```neon
 extensions:
-    console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
+	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 ```
 
 The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application.
@@ -23,21 +23,21 @@ That's all. You don't have to worry about anything else.
 
 ## Configuration
 
-```yaml
+```neon
 console:
-    name: Acme Project
-    version: '1.0'
-    catchExceptions: true / false
-    autoExit: true / false
-    url: https://contributte.com
-    lazy: false
+	name: Acme Project
+	version: '1.0'
+	catchExceptions: true / false
+	autoExit: true / false
+	url: https://contributte.org
+	lazy: false
 ```
 
 In SAPI (CLI) mode there is no http request and thus no URL address. This is an inconvenience you have to solve by yourself - via the `console.url` option.
 
-```yaml
+```neon
 console:
-    url: https://contributte.org
+	url: https://contributte.org
 ```
 
 ### Helpers
@@ -47,27 +47,27 @@ You could also define you custom `helperSet` just in case. There are 2 possible 
 
 Already defined service:
 
-```yaml
+```neon
 services:
-  customHelperSet: App\Model\MyCustomHelperSet
+	customHelperSet: App\Model\MyCustomHelperSet
 
 console:
-    helperSet: @customHelperSet
+	helperSet: @customHelperSet
 ```
 
 Directly defined helperSet:
 
-```yaml
+```neon
 console:
-    helperSet: App\Model\MyCustomHelperSet
+	helperSet: App\Model\MyCustomHelperSet
 ```
 
 By default, helperSet contains 4 helpers defined in `Symfony\Component\Console\Application`. You can add more helpers, if need them.
 
-```yaml
+```neon
 console:
-    helpers:
-      - App\Model\MyReallyGreatHelper
+	helpers:
+		- App\Model\MyReallyGreatHelper
 ```
 
 ### Lazy-loading
@@ -75,9 +75,9 @@ console:
 From version 3.4 `Symfony\Console` uses command lazy-loading. This extension fully supports this feature and
 you can enable it in the NEON file.
 
-```yaml
+```neon
 console:
-    lazy: true
+	lazy: true
 ```
 
 From this point forward, all commands are instantiated only if needed. Don't forget that listing all commands will instantiate them all.
@@ -89,17 +89,17 @@ use Symfony\Component\Console\Command\Command;
 
 class FooCommand extends Command
 {
-    protected static $defaultName = 'app:foo';
+	protected static $defaultName = 'app:foo';
 }
 ```
 
 Or via a service tag.
 
-```yaml
+```neon
 services:
-    commands.foo:
-        class: App\FooCommand
-        tags: [console.command: app:foo]
+	commands.foo:
+		class: App\FooCommand
+		tags: [console.command: app:foo]
 ```
 
 ## Command
@@ -132,9 +132,9 @@ final class FooCommand extends Command
 
 ### Register command
 
-```yml
+```neon
 services:
-    - App\Console\FooCommand
+	- App\Console\FooCommand
 ```
 
 Maybe you will have to flush the `temp/cache` directory.
@@ -156,9 +156,9 @@ Make sure to set it as executable. `chmod +x <root>/bin/console`.
 require __DIR__ . '/../vendor/autoload.php';
 
 exit(App\Bootstrap::boot()
-    ->createContainer()
-    ->getByType(Contributte\Console\Application::class)
-    ->run());
+	->createContainer()
+	->getByType(Contributte\Console\Application::class)
+	->run());
 ```
 
 ##### Nette <= 2.4
