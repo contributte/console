@@ -24,8 +24,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     steps:
@@ -84,8 +84,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     steps:
@@ -141,8 +141,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.2", "7.3", "7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.2", "7.3", "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
         composer-args: [ "" ]
         include:
           - php-version: "7.2"
@@ -215,8 +215,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     if: "github.event_name == 'push'"
