@@ -24,10 +24,10 @@
     "nette/http": "~3.0.1",
     "ninjify/nunjuck": "^0.4",
     "ninjify/qa": "^0.12",
-    "phpstan/phpstan": "^0.12",
-    "phpstan/phpstan-deprecation-rules": "^0.12",
-    "phpstan/phpstan-nette": "^0.12",
-    "phpstan/phpstan-strict-rules": "^0.12",
+    "phpstan/phpstan": "^1.0",
+    "phpstan/phpstan-deprecation-rules": "^1.0",
+    "phpstan/phpstan-nette": "^1.0",
+    "phpstan/phpstan-strict-rules": "^1.0",
     "symfony/event-dispatcher": "^4.3.0 || ^5.0.0"
   },
   "autoload": {
