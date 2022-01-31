@@ -29,7 +29,7 @@ console:
 	version: '1.0'
 	catchExceptions: true / false
 	autoExit: true / false
-	url: https://contributte.org
+	url: https://example.com
 	lazy: false
 ```
 
@@ -37,7 +37,7 @@ In SAPI (CLI) mode there is no http request and thus no URL address. This is an 
 
 ```neon
 console:
-	url: https://contributte.org
+	url: https://example.com
 ```
 
 ### Helpers
