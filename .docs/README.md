@@ -4,7 +4,7 @@
 
 - [Setup](#usage)
 - [Configuration](#configuration)
-- [Example command](#example)
+- [Example command](#example-command)
 - [Entrypoint](#entrypoint)
 
 ## Setup
