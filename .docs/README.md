@@ -4,7 +4,7 @@
 
 - [Setup](#usage)
 - [Configuration](#configuration)
-- [Example command](#command)
+- [Example command](#example)
 - [Entrypoint](#entrypoint)
 
 ## Setup
@@ -103,12 +103,13 @@ services:
 		tags: [console.command: app:foo]
 ```
 
-## Command
+## Example command
 
-### Add user command
+In case of having `console.php` as entrypoint (see below), this would add a user with username `john.doe` to database:
+
+> `php console.php user:add john.doe`
 
 ```php
-
 namespace App\Console;
 
 use Symfony\Component\Console\Command\Command;
