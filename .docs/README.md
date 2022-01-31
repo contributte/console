@@ -33,7 +33,8 @@ console:
 	lazy: false
 ```
 
-In SAPI (CLI) mode there is no http request and thus no URL address. This is an inconvenience you have to solve by yourself - via the `console.url` option.
+In SAPI (CLI) mode, there is no HTTP request and thus no URL address.
+You have to set base URL on your own so that link generator works. Use `console.url` option:
 
 ```neon
 console:
