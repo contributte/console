@@ -105,7 +105,7 @@ services:
 
 ## Example command
 
-In case of having `console.php` as entrypoint (see below), this would add a user with username `john.doe` to database:
+In case of having `console.php` as entrypoint (see below), this would add a user with username `john.doe`:
 
 > `php console.php user:add john.doe`
 
@@ -156,7 +156,7 @@ final class AddUserCommand extends Command
 		try {
 			// do your logic
 			$this->usersModel->add($username);
-			// styled output as well
+			// styled output is supported as well
 			$output->writeln('<success>✔ Successfully added</success>');
 			return 0;
 
