@@ -4,7 +4,7 @@
 
 - [Setup](#usage)
 - [Configuration](#configuration)
-- [Example command](#command)
+- [Example command](#example-command)
 - [Entrypoint](#entrypoint)
 
 ## Setup
@@ -29,15 +29,16 @@ console:
 	version: '1.0'
 	catchExceptions: true / false
 	autoExit: true / false
-	url: https://contributte.org
+	url: https://example.com
 	lazy: false
 ```
 
-In SAPI (CLI) mode there is no http request and thus no URL address. This is an inconvenience you have to solve by yourself - via the `console.url` option.
+In SAPI (CLI) mode, there is no HTTP request and thus no URL address.
+You have to set base URL on your own so that link generator works. Use `console.url` option:
 
 ```neon
 console:
-	url: https://contributte.org
+	url: https://example.com
 ```
 
 ### Helpers
@@ -102,29 +103,71 @@ services:
 		tags: [console.command: app:foo]
 ```
 
-## Command
+## Example command
 
-### Create command
+In case of having `console.php` as entrypoint (see below), this would add a user with username `john.doe` to database:
+
+> `php console.php user:add john.doe`
 
 ```php
-
 namespace App\Console;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class FooCommand extends Command
+final class AddUserCommand extends Command
 {
+
+	private UsersModel $usersModel;
+
+	/**
+	 * Pass dependencies with constructor injection
+	 */
+	public function __construct(UsersModel $usersModel)
+	{
+		parent::__construct(); // don't forget parent call as we extends from Command
+		$this->usersModel = $usersModel;
+	}
 
 	protected function configure(): void
 	{
-		$this->setName('foo');
+		// choose command name
+		$this->setName('user:add')
+			// description (optional)
+			->setDescription('Adds user with given username to database')
+			// arguments (maybe required or not)
+			->setArgument('username', InputArgument::REQUIRED, 'User\'s username');
+			// you can list options as well (refer to symfony/console docs for more info)
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output): void
+	/**
+	 * Don't forget to return 0 for success or non-zero for error
+	 */
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		// Some magic..
+		// retrieve passed arguments/options
+		$username = $input->getArgument('username');
+
+		// you can use symfony/console output
+		$output->writeln(\sprintf('Adding user %s…', $username));
+
+		try {
+			// do your logic
+			$this->usersModel->add($username);
+			// styled output as well
+			$output->writeln('<success>✔ Successfully added</success>');
+			return 0;
+
+		} catch (\Exception $e) {
+			// handle error
+			$output->writeln(\sprintf(
+				'<error>❌ Error occurred: </error>',
+				$e->getMessage(),
+			));
+			return 1;
+		}
 	}
 
 }
@@ -134,7 +177,7 @@ final class FooCommand extends Command
 
 ```neon
 services:
-	- App\Console\FooCommand
+	- App\Console\AddUserCommand
 ```
 
 Maybe you will have to flush the `temp/cache` directory.
