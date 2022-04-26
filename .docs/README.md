@@ -27,7 +27,7 @@ That's all. You don't have to worry about anything else.
 console:
 	name: Acme Project
 	version: '1.0'
-	catchExceptions: true / false
+	catchExceptions: true / false # Keep it false (default), if you want tracy to handle your exceptions
 	autoExit: true / false
 	url: https://example.com
 	lazy: false
