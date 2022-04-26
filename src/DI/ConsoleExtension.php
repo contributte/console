@@ -48,7 +48,7 @@ class ConsoleExtension extends CompilerExtension
 			'url' => Expect::anyOf(Expect::string(), Expect::null()),
 			'name' => Expect::string(),
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
-			'catchExceptions' => Expect::bool(),
+			'catchExceptions' => Expect::bool(false),
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
 			'helpers' => Expect::arrayOf(
@@ -87,9 +87,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		// Catch or populate exceptions
-		if ($config->catchExceptions !== null) {
-			$applicationDef->addSetup('setCatchExceptions', [$config->catchExceptions]);
-		}
+		$applicationDef->addSetup('setCatchExceptions', [$config->catchExceptions]);
 
 		// Call die() or not
 		if ($config->autoExit !== null) {
