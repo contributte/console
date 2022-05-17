@@ -138,7 +138,7 @@ final class AddUserCommand extends Command
 			// description (optional)
 			->setDescription('Adds user with given username to database')
 			// arguments (maybe required or not)
-			->setArgument('username', InputArgument::REQUIRED, 'User\'s username');
+			->addArgument('username', InputArgument::REQUIRED, 'User\'s username');
 			// you can list options as well (refer to symfony/console docs for more info)
 	}
 
