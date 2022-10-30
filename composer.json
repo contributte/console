@@ -21,13 +21,13 @@
     "symfony/console": "^4.2.9|^5.0.0|^6.0.0"
   },
   "require-dev": {
-    "nette/http": "~3.0.1",
+    "nette/http": "^3.0.1",
     "ninjify/nunjuck": "^0.4",
-    "ninjify/qa": "^0.12",
-    "phpstan/phpstan": "^1.0",
+    "ninjify/qa": "^v0.13.0",
+    "phpstan/phpstan": "^1.8.11",
     "phpstan/phpstan-deprecation-rules": "^1.0",
-    "phpstan/phpstan-nette": "^1.0",
-    "phpstan/phpstan-strict-rules": "^1.0",
+    "phpstan/phpstan-nette": "^1.1.0",
+    "phpstan/phpstan-strict-rules": "^1.4.4",
     "symfony/event-dispatcher": "^4.3 || ^5.0 || ^6.0"
   },
   "autoload": {
@@ -44,7 +44,11 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "extra": {
     "branch-alias": {

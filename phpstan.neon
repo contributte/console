@@ -5,5 +5,8 @@ includes:
 	- vendor/phpstan/phpstan-strict-rules/rules.neon
 
 parameters:
+	level: 9
+	paths:
+		- src
 	ignoreErrors:
-		- '#^Parameter \#1 \$function of function call_user_func expects callable\(\): mixed, array\{string\|null, .+\} given\.$#'
+		- '#^Parameter \#1 \$callback of function call_user_func expects callable\(\): mixed, array\{string\|null, .+\} given\.$#'
