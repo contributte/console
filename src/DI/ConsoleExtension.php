@@ -45,7 +45,7 @@ class ConsoleExtension extends CompilerExtension
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'url' => Expect::anyOf(Expect::string(), Expect::null()),
+			'url' => Expect::anyOf(Expect::string(), Expect::null())->dynamic(),
 			'name' => Expect::string(),
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),

@@ -187,3 +187,25 @@ test(function (): void {
 	$application = $container->getByType(Application::class);
 	Assert::type(Application::class, $application);
 });
+
+// URL as Dynamic parameter
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->setDynamicParameterNames(['url']);
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->addExtension('http', new HttpExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+			url: %url%
+		parameters:
+			url: https://contributte.org/
+		', 'neon'));
+	}, [getmypid(), 9]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	Assert::type(Application::class, $container->getByType(Application::class));
+	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
+});
