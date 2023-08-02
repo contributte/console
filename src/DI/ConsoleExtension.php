@@ -46,7 +46,7 @@ class ConsoleExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'url' => Expect::anyOf(Expect::string(), Expect::null())->dynamic(),
-			'name' => Expect::string(),
+			'name' => Expect::string()->dynamic(),
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
 			'catchExceptions' => Expect::bool(),
 			'autoExit' => Expect::bool(),

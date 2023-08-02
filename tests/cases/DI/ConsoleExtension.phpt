@@ -209,3 +209,24 @@ test(function (): void {
 	Assert::type(Application::class, $container->getByType(Application::class));
 	Assert::equal('https://contributte.org/', (string) $container->getService('http.request')->getUrl());
 });
+
+// Name as Dynamic parameter
+test(function (): void {
+	$loader = new ContainerLoader(TEMP_DIR, true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->setDynamicParameterNames(['name']);
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+			name: %name%
+		parameters:
+			name: Hello world
+		', 'neon'));
+	}, [getmypid(), 10]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::equal('Hello world', $application->getName());
+});
