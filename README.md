@@ -36,11 +36,10 @@ For details on how to use this package, check out our [documentation](.docs).
 
 ## Versions
 
-| State  | Version      | Branch   | Nette  | PHP     |
-|--------|--------------|----------|--------|---------|
-| dev    | `^0.10.0`    | `master` | `3.0+` | `>=7.2` |
-| stable | `^0.9.0`     | `master` | `3.0+` | `>=7.2` |
-| stable | `^0.5.0`     | `master` | `2.4`  | `>=7.1` |
+| State  | Version   | Branch   | Nette  | PHP     |
+|--------|-----------|----------|--------|---------|
+| dev    | `^0.11.0` | `master` | `3.2+` | `>=8.1` |
+| stable | `^0.10.0` | `master` | `3.2+` | `>=8.1` |
 
 
 ## Development
