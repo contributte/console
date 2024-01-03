@@ -4,7 +4,6 @@ namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
-use Contributte\Console\Exception\Logical\InvalidArgumentException;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
@@ -32,10 +31,6 @@ class ConsoleExtension extends CompilerExtension
 
 	public function __construct(bool $cliMode = false)
 	{
-		if (func_num_args() <= 0) {
-			throw new InvalidArgumentException(sprintf('Provide CLI mode, e.q. %s(%%consoleMode%%).', self::class));
-		}
-
 		$this->cliMode = $cliMode;
 	}
 
