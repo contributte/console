@@ -21,14 +21,12 @@
     "symfony/console": "^4.2.9|^5.0.0|^6.0.0"
   },
   "require-dev": {
-    "nette/http": "^3.0.1",
-    "ninjify/nunjuck": "^0.4",
-    "ninjify/qa": "^0.13.0",
-    "phpstan/phpstan": "^1.8.11",
-    "phpstan/phpstan-deprecation-rules": "^1.0",
-    "phpstan/phpstan-nette": "^1.1.0",
-    "phpstan/phpstan-strict-rules": "^1.4.4",
-    "symfony/event-dispatcher": "^4.3 || ^5.0 || ^6.0"
+    "nette/http": "^3.2.3",
+    "contributte/qa": "^0.4",
+    "contributte/tester": "^0.3",
+    "contributte/phpstan": "^0.1",
+    "mockery/mockery": "^1.6.7",
+    "symfony/event-dispatcher": "^6.4.2 || ^7.0.2"
   },
   "autoload": {
     "psr-4": {
