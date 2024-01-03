@@ -12,11 +12,11 @@ class ContainerCommandLoader implements CommandLoaderInterface
 
 	private Container $container;
 
-	/** @var string[] */
+	/** @var array<string> */
 	private array $commandMap;
 
 	/**
-	 * @param string[] $commandMap
+	 * @param array<string> $commandMap
 	 */
 	public function __construct(Container $container, array $commandMap)
 	{
@@ -24,12 +24,6 @@ class ContainerCommandLoader implements CommandLoaderInterface
 		$this->commandMap = $commandMap;
 	}
 
-	/**
-	 * Loads a command.
-	 *
-	 * @throws CommandNotFoundException
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 */
 	public function get(string $name): Command
 	{
 		if (!$this->has($name)) {
@@ -39,18 +33,13 @@ class ContainerCommandLoader implements CommandLoaderInterface
 		return $this->container->getService($this->commandMap[$name]);
 	}
 
-	/**
-	 * Checks if a command exists.
-	 *
-	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
-	 */
 	public function has(string $name): bool
 	{
 		return array_key_exists($name, $this->commandMap);
 	}
 
 	/**
-	 * @return string[] All registered command names
+	 * {@inheritDoc}
 	 */
 	public function getNames(): array
 	{

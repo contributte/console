@@ -5,9 +5,7 @@ namespace Contributte\Console\DI;
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Exception\Logical\InvalidArgumentException;
-use Contributte\DI\Helper\ExtensionDefinitionsHelper;
 use Nette\DI\CompilerExtension;
-use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
@@ -23,7 +21,7 @@ use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @property-read stdClass $config
+ * @method stdClass getConfig()
  */
 class ConsoleExtension extends CompilerExtension
 {
@@ -68,8 +66,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
-		$defhelp = new ExtensionDefinitionsHelper($this->compiler);
+		$config = $this->getConfig();
 
 		// Register Symfony Console Application
 		$applicationDef = $builder->addDefinition($this->prefix('application'))
@@ -97,19 +94,14 @@ class ConsoleExtension extends CompilerExtension
 
 		// Register given or default HelperSet
 		if ($config->helperSet !== null) {
-			$applicationDef->addSetup('setHelperSet', [
-				$defhelp->getDefinitionFromConfig($config->helperSet, $this->prefix('helperSet')),
-			]);
+			$applicationDef->addSetup('setHelperSet', [new Statement($config->helperSet)]);
 		}
 
 		// Register extra helpers
 		foreach ($config->helpers as $helperName => $helperConfig) {
-			$helperPrefix = $this->prefix('helper.' . $helperName);
-			$helperDef = $defhelp->getDefinitionFromConfig($helperConfig, $helperPrefix);
-
-			if ($helperDef instanceof Definition) {
-				$helperDef->setAutowired(false);
-			}
+			$helperDef = $builder->addDefinition($this->prefix('helper.' . $helperName))
+				->setFactory(new Statement($helperConfig))
+				->setAutowired(false);
 
 			$applicationDef->addSetup('?->getHelperSet()->set(?)', ['@self', $helperDef]);
 		}
@@ -138,7 +130,7 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->config;
+		$config = $this->getConfig();
 
 		/** @var ServiceDefinition $applicationDef */
 		$applicationDef = $builder->getDefinition($this->prefix('application'));
