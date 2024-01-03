@@ -1,19 +1,22 @@
-<?xml version="1.0"?>
-<ruleset>
-	<!-- Contributte Coding Standard -->
-	<rule ref="./vendor/ninjify/coding-standard/contributte.xml"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Contributte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+	<!-- Rulesets -->
+	<rule ref="./vendor/contributte/qa/ruleset-8.0.xml"/>
 
-	<!-- Specific rules -->
+	<!-- Rules -->
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="src" value="Contributte\Console"/>
-				<element key="tests/cases" value="Tests\Cases"/>
-				<element key="tests/fixtures" value="Tests\Fixtures"/>
+				<element key="tests" value="Tests"/>
+			</property>
+			<property name="extensions" type="array">
+				<element key="php" value="php"/>
+				<element key="phpt" value="phpt"/>
 			</property>
 		</properties>
 	</rule>
 
-	<!-- Exclude folders -->
+	<!-- Excludes -->
 	<exclude-pattern>/tests/tmp</exclude-pattern>
 </ruleset>
