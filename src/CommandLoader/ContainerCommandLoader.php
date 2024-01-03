@@ -10,11 +10,10 @@ use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 class ContainerCommandLoader implements CommandLoaderInterface
 {
 
-	/** @var Container */
-	private $container;
+	private Container $container;
 
 	/** @var string[] */
-	private $commandMap;
+	private array $commandMap;
 
 	/**
 	 * @param string[] $commandMap
@@ -28,11 +27,10 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	/**
 	 * Loads a command.
 	 *
-	 * @param string $name
 	 * @throws CommandNotFoundException
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
-	public function get($name): Command
+	public function get(string $name): Command
 	{
 		if (!$this->has($name)) {
 			throw new CommandNotFoundException(sprintf('Command "%s" does not exist.', $name));
@@ -44,10 +42,9 @@ class ContainerCommandLoader implements CommandLoaderInterface
 	/**
 	 * Checks if a command exists.
 	 *
-	 * @param string $name
 	 * @phpcsSuppress SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 	 */
-	public function has($name): bool
+	public function has(string $name): bool
 	{
 		return array_key_exists($name, $this->commandMap);
 	}

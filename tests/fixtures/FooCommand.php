@@ -2,23 +2,17 @@
 
 namespace Tests\Fixtures;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+	name: 'app:foo',
+	description: 'Foo command',
+)]
 final class FooCommand extends Command
 {
-
-	/** @var string */
-	protected static $defaultName = 'app:foo';
-
-	/**
-	 * Configure command
-	 */
-	protected function configure(): void
-	{
-		$this->setName('foo');
-	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{

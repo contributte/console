@@ -30,8 +30,7 @@ class ConsoleExtension extends CompilerExtension
 
 	public const COMMAND_TAG = 'console.command';
 
-	/** @var bool */
-	private $cliMode;
+	private bool $cliMode;
 
 	public function __construct(bool $cliMode = false)
 	{
@@ -177,7 +176,7 @@ class ConsoleExtension extends CompilerExtension
 					}
 				} else {
 					// Parse it from static property
-					$entry['name'] = call_user_func([$service->getType(), 'getDefaultName']);
+					$entry['name'] = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
 				}
 
 				// Validate command name
