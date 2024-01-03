@@ -4,13 +4,13 @@ namespace Contributte\Console\DI;
 
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
+use Contributte\Console\Http\ConsoleRequestFactory;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
 use Nette\DI\ServiceCreationException;
-use Nette\Http\Request;
-use Nette\Http\UrlScript;
+use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use stdClass;
@@ -125,10 +125,17 @@ class ConsoleExtension extends CompilerExtension
 		$applicationDef = $builder->getDefinition($this->prefix('application'));
 
 		// Setup URL for CLI
-		if ($config->url !== null && $builder->hasDefinition('http.request')) {
-			/** @var ServiceDefinition $httpDef */
-			$httpDef = $builder->getDefinition('http.request');
-			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
+		if ($config->url !== null && $builder->hasDefinition('http.requestFactory')) {
+			$httpDef = $builder->getDefinition('http.requestFactory');
+			assert($httpDef instanceof ServiceDefinition);
+			$factoryEntity = $httpDef->getFactory()->getEntity();
+			if ($factoryEntity === RequestFactory::class) {
+				$httpDef->setFactory(ConsoleRequestFactory::class, [$config->url]);
+			} else {
+				throw new ServiceCreationException(
+					'Custom http.requestFactory is used, argument console.url should be removed.'
+				);
+			}
 		}
 
 		// Add all commands to map for command loader

@@ -15,6 +15,7 @@ use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
 use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
+use Tests\Fixtures\FooRequestFactory;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
@@ -52,7 +53,7 @@ Toolkit::test(function (): void {
 	Assert::type(FooCommand::class, $container->getByType(Command::class));
 });
 
-// Provide URL
+// Provide URL using default request factory
 Toolkit::test(function (): void {
 	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
@@ -208,4 +209,40 @@ Toolkit::test(function (): void {
 
 	$application = $container->getByType(Application::class);
 	Assert::equal('Hello world', $application->getName());
+});
+
+// Use custom request Factory
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->addExtension('http', new HttpExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		services:
+			http.requestFactory:  Tests\Fixtures\FooRequestFactory
+		', 'neon'));
+	}, [getmypid(), 11]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	Assert::equal(FooRequestFactory::CUSTOM_URL, (string) $container->getService('http.request')->getUrl());
+});
+
+// Throw error on custom factory and console.url set
+Toolkit::test(function (): void {
+	Assert::exception(function (): void {
+		$loader = new ContainerLoader(Environment::getTestDir(), true);
+		$class = $loader->load(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->addExtension('http', new HttpExtension(true));
+			$compiler->loadConfig(FileMock::create('
+		services:
+			http.requestFactory:  Tests\Fixtures\FooRequestFactory
+		console:
+			url: https://contributte.org/
+		', 'neon'));
+		}, [getmypid(), 12]);
+		new $class();
+	}, ServiceCreationException::class, 'Custom http.requestFactory is used, argument console.url should be removed.');
 });
