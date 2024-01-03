@@ -13,7 +13,6 @@ use Nette\Http\Request;
 use Nette\Http\UrlScript;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Utils\Arrays;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
@@ -24,8 +23,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ConsoleExtension extends CompilerExtension
 {
-
-	public const COMMAND_TAG = 'console.command';
 
 	private bool $cliMode;
 
@@ -46,7 +43,6 @@ class ConsoleExtension extends CompilerExtension
 			'helpers' => Expect::arrayOf(
 				Expect::anyOf(Expect::string(), Expect::array(), Expect::type(Statement::class))
 			),
-			'lazy' => Expect::bool(true),
 		]);
 	}
 
@@ -102,13 +98,11 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		// Commands lazy loading
-		if ($config->lazy) {
-			$builder->addDefinition($this->prefix('commandLoader'))
-				->setType(CommandLoaderInterface::class)
-				->setFactory(ContainerCommandLoader::class);
+		$builder->addDefinition($this->prefix('commandLoader'))
+			->setType(CommandLoaderInterface::class)
+			->setFactory(ContainerCommandLoader::class);
 
-			$applicationDef->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
-		}
+		$applicationDef->addSetup('setCommandLoader', ['@' . $this->prefix('commandLoader')]);
 
 		// Export types
 		$this->compiler->addExportedType(Application::class);
@@ -137,54 +131,30 @@ class ConsoleExtension extends CompilerExtension
 			$httpDef->setFactory(Request::class, [new Statement(UrlScript::class, [$config->url])]);
 		}
 
-		// Register all commands (if they are not lazy-loaded)
-		// otherwise build a command map for command loader
+		// Add all commands to map for command loader
 		$commands = $builder->findByType(Command::class);
+		$commandMap = [];
 
-		if (!$config->lazy) {
-			// Iterate over all commands and add to console
-			foreach ($commands as $serviceName => $service) {
-				$applicationDef->addSetup('add', [$service]);
-			}
-		} else {
-			$commandMap = [];
+		// Iterate over all commands and build commandMap
+		foreach ($commands as $serviceName => $service) {
+			$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
 
-			// Iterate over all commands and build commandMap
-			foreach ($commands as $serviceName => $service) {
-				$tags = $service->getTags();
-				$entry = ['name' => null, 'alias' => null];
-
-				if (isset($tags[self::COMMAND_TAG])) {
-					// Parse tag's name attribute
-					if (is_string($tags[self::COMMAND_TAG])) {
-						$entry['name'] = $tags[self::COMMAND_TAG];
-					} elseif (is_array($tags[self::COMMAND_TAG])) {
-						$entry['name'] = Arrays::get($tags[self::COMMAND_TAG], 'name', null);
-					}
-				} else {
-					// Parse it from static property
-					$entry['name'] = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
-				}
-
-				// Validate command name
-				if (!isset($entry['name'])) {
-					throw new ServiceCreationException(
-						sprintf(
-							'Command "%s" missing tag "%s[name]" or variable "$defaultName".',
-							$service->getType(),
-							self::COMMAND_TAG
-						)
-					);
-				}
-
-				// Append service to command map
-				$commandMap[$entry['name']] = $serviceName;
+			if ($commandName === null) {
+				throw new ServiceCreationException(
+					sprintf(
+						'Command "%s" missing #[AsCommand] attribute',
+						$service->getType(),
+					)
+				);
 			}
 
-			/** @var ServiceDefinition $commandLoaderDef */
-			$commandLoaderDef = $builder->getDefinition($this->prefix('commandLoader'));
-			$commandLoaderDef->getFactory()->arguments = ['@container', $commandMap];
+			// Append service to command map
+			$commandMap[$commandName] = $serviceName;
 		}
+
+		/** @var ServiceDefinition $commandLoaderDef */
+		$commandLoaderDef = $builder->getDefinition($this->prefix('commandLoader'));
+		$commandLoaderDef->getFactory()->arguments = ['@container', $commandMap];
 
 		// Register event dispatcher, if available
 		try {

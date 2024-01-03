@@ -38,7 +38,6 @@ Toolkit::test(function (): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: false
 		services:
 			foo: Tests\Fixtures\FooCommand
 		', 'neon'));
@@ -48,7 +47,7 @@ Toolkit::test(function (): void {
 	$container = new $class();
 
 	Assert::type(Application::class, $container->getByType(Application::class));
-	Assert::true($container->isCreated('foo'));
+	Assert::false($container->isCreated('foo'));
 	Assert::count(1, $container->findByType(Command::class));
 	Assert::type(FooCommand::class, $container->getByType(Command::class));
 });
@@ -118,15 +117,8 @@ Toolkit::test(function (): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: true
 		services:
 			defaultName: Tests\Fixtures\FooCommand
-			tagNameString:
-				factory: Tests\Fixtures\FooCommand
-				tags: [console.command: bar]
-			tagNameArray:
-				factory: Tests\Fixtures\FooCommand
-				tags: [console.command: [name: baz]]
 		', 'neon'));
 	}, [getmypid(), 6]);
 
@@ -136,10 +128,8 @@ Toolkit::test(function (): void {
 	$application = $container->getByType(Application::class);
 	Assert::type(Application::class, $application);
 	Assert::false($container->isCreated('defaultName'));
-	Assert::count(3, $container->findByType(Command::class));
+	Assert::count(1, $container->findByType(Command::class));
 	Assert::true($application->has('app:foo'));
-	Assert::true($application->has('bar'));
-	Assert::true($application->has('baz'));
 });
 
 // Invalid command
@@ -150,12 +140,11 @@ Toolkit::test(function (): void {
 			$compiler->addExtension('console', new ConsoleExtension(true));
 			$compiler->loadConfig(FileMock::create('
 			console:
-				lazy: true
 			services:
 				noName: Tests\Fixtures\NoNameCommand
 		', 'neon'));
 		}, [getmypid(), 7]);
-	}, ServiceCreationException::class, 'Command "Tests\Fixtures\NoNameCommand" missing tag "console.command[name]" or variable "$defaultName".');
+	}, ServiceCreationException::class, 'Command "Tests\Fixtures\NoNameCommand" missing #[AsCommand] attribute');
 });
 
 // Always exported

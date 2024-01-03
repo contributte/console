@@ -1,4 +1,6 @@
-# Console
+# Contributte Console
+
+Integration of [Symfony Console](https://symfony.com/doc/current/components/console.html) into Nette Framework.
 
 ## Content
 
@@ -30,7 +32,6 @@ console:
 	catchExceptions: true / false
 	autoExit: true / false
 	url: https://example.com
-	lazy: false
 ```
 
 In SAPI (CLI) mode, there is no HTTP request and thus no URL address.
@@ -43,27 +44,24 @@ console:
 
 ### Helpers
 
-You could also define you custom `helperSet` just in case. There are 2 possible approaches. You can register your
-`App\Model\MyCustomHelperSet` as a service under the `services` section or provide it directly to the extension config `helperSet`.
-
-Already defined service:
+You have the option to define your own helperSet if needed. There are two methods to do this. One way is to register your `App\Model\MyCustomHelperSet` as a service in the services section.
+Alternatively, you can directly provide it to the extension configuration helperSet.
 
 ```neon
+console:
+  # directly
+	helperSet: App\Model\MyCustomHelperSet
+
+	# or reference service
+	helperSet: @customHelperSet
+
 services:
 	customHelperSet: App\Model\MyCustomHelperSet
-
-console:
-	helperSet: @customHelperSet
 ```
 
-Directly defined helperSet:
+By default, helperSet contains 4 helpers defined in `Symfony\Component\Console\Application`. You can add your own helpers to the helperSet.
 
-```neon
-console:
-	helperSet: App\Model\MyCustomHelperSet
-```
-
-By default, helperSet contains 4 helpers defined in `Symfony\Component\Console\Application`. You can add more helpers, if need them.
+```php
 
 ```neon
 console:
@@ -73,24 +71,17 @@ console:
 
 ### Lazy-loading
 
-From version 3.4 `Symfony\Console` uses command lazy-loading. This extension fully supports this feature and
-you can enable it in the NEON file.
-
-```neon
-console:
-	lazy: true
-```
-
-From this point forward, all commands are instantiated only if needed. Don't forget that listing all commands will instantiate them all.
-
-How to define command names? Define `$defaultName` in the command or via the `console.command` tag on the service.
+By default, all commands are registered in the console application during the extension registration. This means that all commands are instantiated and their dependencies are injected.
+This can be a problem if you have a lot of commands and you don't need all of them at once. In this case, this extension setup lazy-loading of commands.
+This means that commands are instantiated only when they are needed.
 
 ```php
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'app:foo')]
 class FooCommand extends Command
 {
-	protected static $defaultName = 'app:foo';
 }
 ```
 
@@ -116,35 +107,28 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(
+    name: 'app:foo',
+    description: 'Adds user with given username to database',
+)]
 final class AddUserCommand extends Command
 {
 
-	private UsersModel $usersModel;
+	private UserFacade $userFacade;
 
-	/**
-	 * Pass dependencies with constructor injection
-	 */
-	public function __construct(UsersModel $usersModel)
+	public function __construct(UserFacade $userFacade)
 	{
-		parent::__construct(); // don't forget parent call as we extends from Command
-		$this->usersModel = $usersModel;
+		parent::__construct();
+		$this->userFacade = $usersFacade;
 	}
 
 	protected function configure(): void
 	{
-		// choose command name
-		$this->setName('user:add')
-			// description (optional)
-			->setDescription('Adds user with given username to database')
-			// arguments (maybe required or not)
-			->addArgument('username', InputArgument::REQUIRED, 'User\'s username');
-			// you can list options as well (refer to symfony/console docs for more info)
+	  $this->addArgument('username', InputArgument::REQUIRED, "User's username");
 	}
 
-	/**
-	 * Don't forget to return 0 for success or non-zero for error
-	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		// retrieve passed arguments/options
@@ -173,14 +157,15 @@ final class AddUserCommand extends Command
 }
 ```
 
-### Register command
+Register your command as a service in NEON file.
 
 ```neon
 services:
 	- App\Console\AddUserCommand
 ```
 
-Maybe you will have to flush the `temp/cache` directory.
+> [!IMPORTANT]
+> Remember! Flush `temp/cache` directory before running the command.
 
 ## Entrypoint
 
@@ -189,8 +174,6 @@ The very last piece of the puzzle is the console entrypoint. It is a simple scri
 You can copy & paste it to your project, for example to `<root>/bin/console`.
 
 Make sure to set it as executable. `chmod +x <root>/bin/console`.
-
-##### Nette 3.0+
 
 ```php
 #!/usr/bin/env php
@@ -202,15 +185,4 @@ exit(App\Bootstrap::boot()
 	->createContainer()
 	->getByType(Contributte\Console\Application::class)
 	->run());
-```
-
-##### Nette <= 2.4
-
-```php
-#!/usr/bin/env php
-<?php declare(strict_types = 1);
-
-$container = require __DIR__ . '/../app/bootstrap.php';
-
-exit($container->getByType(Contributte\Console\Application::class)->run());
 ```

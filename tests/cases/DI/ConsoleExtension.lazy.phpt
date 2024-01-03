@@ -23,7 +23,6 @@ Toolkit::test(function (): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: true
 		services:
 			foo: Tests\Fixtures\FooCommand
 		', 'neon'));

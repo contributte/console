@@ -21,7 +21,6 @@ Toolkit::test(function (): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
 		console:
-			lazy: false
 		services:
 			- Tests\Fixtures\HelperSetCommand
 		', 'neon'));
