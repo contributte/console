@@ -1,10 +1,8 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: DI\ConsoleExtension.HelperSet
- */
-
 use Contributte\Console\DI\ConsoleExtension;
+use Contributte\Tester\Environment;
+use Contributte\Tester\Toolkit;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
@@ -17,8 +15,8 @@ use Tests\Fixtures\FooHelperSet;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // Default helperSet
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 	}, [getmypid(), 1]);
@@ -31,8 +29,8 @@ test(function (): void {
 });
 
 // Own helperSet
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -49,8 +47,8 @@ test(function (): void {
 });
 
 // Own helperSet as service
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -70,8 +68,8 @@ test(function (): void {
 });
 
 // Own helper
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -90,9 +88,9 @@ test(function (): void {
 });
 
 // Null helperSet
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::exception(function (): void {
-		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader = new ContainerLoader(Environment::getTestDir(), true);
 		$loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('console', new ConsoleExtension(true));
 			$compiler->loadConfig(FileMock::create('

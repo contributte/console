@@ -2,6 +2,8 @@
 
 use Contributte\Console\Application;
 use Contributte\Console\DI\ConsoleExtension;
+use Contributte\Tester\Environment;
+use Contributte\Tester\Toolkit;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerLoader;
@@ -16,8 +18,8 @@ use Tests\Fixtures\ThrowingCommand;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('

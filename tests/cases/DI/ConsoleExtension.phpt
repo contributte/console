@@ -1,12 +1,10 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: DI\ConsoleExtension
- */
-
 use Contributte\Console\Application;
 use Contributte\Console\DI\ConsoleExtension;
 use Contributte\Console\Exception\Logical\InvalidArgumentException;
+use Contributte\Tester\Environment;
+use Contributte\Tester\Toolkit;
 use Nette\Bridges\HttpDI\HttpExtension;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
@@ -22,8 +20,8 @@ use Tests\Fixtures\FooCommand;
 require_once __DIR__ . '/../../bootstrap.php';
 
 // No commands
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 	}, [getmypid(), 1]);
@@ -35,8 +33,8 @@ test(function (): void {
 });
 
 // 1 command of type FooCommand
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -57,8 +55,8 @@ test(function (): void {
 });
 
 // Provide URL
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->addExtension('http', new HttpExtension(true));
@@ -75,15 +73,15 @@ test(function (): void {
 });
 
 // No mode provided
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::exception(function (): void {
 		new ConsoleExtension();
 	}, InvalidArgumentException::class, 'Provide CLI mode, e.q. Contributte\Console\DI\ConsoleExtension(%consoleMode%).');
 });
 
 // Non-CLI mode
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(false));
 	}, [getmypid(), 4]);
@@ -97,8 +95,8 @@ test(function (): void {
 });
 
 // Config
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -122,8 +120,8 @@ test(function (): void {
 });
 
 // Lazy commands
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->loadConfig(FileMock::create('
@@ -153,9 +151,9 @@ test(function (): void {
 });
 
 // Invalid command
-test(function (): void {
+Toolkit::test(function (): void {
 	Assert::exception(function (): void {
-		$loader = new ContainerLoader(TEMP_DIR, true);
+		$loader = new ContainerLoader(Environment::getTestDir(), true);
 		$loader->load(function (Compiler $compiler): void {
 			$compiler->addExtension('console', new ConsoleExtension(true));
 			$compiler->loadConfig(FileMock::create('
@@ -169,8 +167,8 @@ test(function (): void {
 });
 
 // Always exported
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->addExtension('console', new ConsoleExtension(true));
 		$compiler->addExtension('di', new DIExtension());
@@ -189,8 +187,8 @@ test(function (): void {
 });
 
 // URL as Dynamic parameter
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->setDynamicParameterNames(['url']);
 		$compiler->addExtension('console', new ConsoleExtension(true));
@@ -211,8 +209,8 @@ test(function (): void {
 });
 
 // Name as Dynamic parameter
-test(function (): void {
-	$loader = new ContainerLoader(TEMP_DIR, true);
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
 	$class = $loader->load(function (Compiler $compiler): void {
 		$compiler->setDynamicParameterNames(['name']);
 		$compiler->addExtension('console', new ConsoleExtension(true));
