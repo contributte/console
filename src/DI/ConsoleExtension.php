@@ -40,7 +40,7 @@ class ConsoleExtension extends CompilerExtension
 			'url' => Expect::anyOf(Expect::string(), Expect::null())->dynamic(),
 			'name' => Expect::string()->dynamic(),
 			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
-			'catchExceptions' => Expect::bool(),
+			'catchExceptions' => Expect::bool()->dynamic(),
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
 			'helpers' => Expect::arrayOf(

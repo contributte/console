@@ -23,7 +23,7 @@
   "require-dev": {
     "nette/http": "^3.2.3",
     "contributte/qa": "^0.4",
-    "contributte/tester": "^0.3",
+    "contributte/tester": "^0.4",
     "contributte/phpstan": "^0.1",
     "mockery/mockery": "^1.6.7",
     "symfony/event-dispatcher": "^6.4.2 || ^7.0.2"
