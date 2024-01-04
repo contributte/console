@@ -13,6 +13,7 @@ use Nette\DI\ServiceCreationException;
 use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Nette\Utils\Arrays;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
