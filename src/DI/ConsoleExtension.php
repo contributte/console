@@ -13,6 +13,7 @@ use Nette\DI\ServiceCreationException;
 use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use Nette\Utils\Arrays;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
@@ -144,15 +145,29 @@ class ConsoleExtension extends CompilerExtension
 
 		// Iterate over all commands and build commandMap
 		foreach ($commands as $serviceName => $service) {
-			$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
+			$tags = $service->getTags();
+			$commandName = null;
 
+			// Try to use console.command tag
+			if (isset($tags['console.command'])) {
+				if (is_string($tags['console.command'])) {
+					$commandName = $tags['console.command'];
+				} elseif (is_array($tags['console.command'])) {
+					$commandName = Arrays::get($tags['console.command'], 'name', null);
+				}
+			}
+
+			// Try to detect command name from Command::getDefaultName()
 			if ($commandName === null) {
-				throw new ServiceCreationException(
-					sprintf(
-						'Command "%s" missing #[AsCommand] attribute',
-						$service->getType(),
-					)
-				);
+				$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
+				if ($commandName === null) {
+					throw new ServiceCreationException(
+						sprintf(
+							'Command "%s" missing #[AsCommand] attribute',
+							$service->getType(),
+						)
+					);
+				}
 			}
 
 			// Append service to command map
@@ -161,7 +176,7 @@ class ConsoleExtension extends CompilerExtension
 
 		/** @var ServiceDefinition $commandLoaderDef */
 		$commandLoaderDef = $builder->getDefinition($this->prefix('commandLoader'));
-		$commandLoaderDef->getFactory()->arguments = ['@container', $commandMap];
+		$commandLoaderDef->setArguments(['@container', $commandMap]);
 
 		// Register event dispatcher, if available
 		try {

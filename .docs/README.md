@@ -92,6 +92,8 @@ services:
 	commands.foo:
 		class: App\FooCommand
 		tags: [console.command: app:foo]
+		# or
+		tags: [console.command: {name: app:foo}]
 ```
 
 ## Example command
