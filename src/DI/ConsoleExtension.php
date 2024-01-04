@@ -144,17 +144,27 @@ class ConsoleExtension extends CompilerExtension
 
 		// Iterate over all commands and build commandMap
 		foreach ($commands as $serviceName => $service) {
-			$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
+			$tags = $service->getTags();
+			$commandDef = $tags['console.command'] ?? null;
+			$commandName = null;
+			if ($commandDef !== null) {
+				if (is_string($commandDef)) {
+					$commandName = $commandDef;
+				} elseif (is_array($commandDef)) {
+					$commandName = Arrays::get($tags['console.command'], 'name', null);
+				}
+			} else {
+				$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
 
-			if ($commandName === null) {
-				throw new ServiceCreationException(
-					sprintf(
-						'Command "%s" missing #[AsCommand] attribute',
-						$service->getType(),
-					)
-				);
+				if ($commandName === null) {
+					throw new ServiceCreationException(
+						sprintf(
+							'Command "%s" missing #[AsCommand] attribute',
+							$service->getType(),
+						)
+					);
+				}
 			}
-
 			// Append service to command map
 			$commandMap[$commandName] = $serviceName;
 		}
