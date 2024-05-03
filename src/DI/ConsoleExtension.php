@@ -157,6 +157,7 @@ class ConsoleExtension extends CompilerExtension
 				}
 			}
 
+			$aliases = [];
 			// Try to detect command name from Command::getDefaultName()
 			if ($commandName === null) {
 				$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
@@ -168,10 +169,19 @@ class ConsoleExtension extends CompilerExtension
 						)
 					);
 				}
+				$aliases = explode('|', $commandName);
+				$commandName = array_shift($aliases);
+				if ($commandName === '') {
+					$commandName = array_shift($aliases);
+				}
 			}
 
 			// Append service to command map
 			$commandMap[$commandName] = $serviceName;
+
+			foreach ($aliases as $alias) {
+				$commandMap[$alias] = $serviceName;
+			}
 		}
 
 		/** @var ServiceDefinition $commandLoaderDef */
