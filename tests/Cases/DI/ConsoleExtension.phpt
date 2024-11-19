@@ -14,7 +14,9 @@ use Nette\DI\ServiceCreationException;
 use Symfony\Component\Console\Command\Command;
 use Tester\Assert;
 use Tester\FileMock;
+use Tests\Fixtures\FooAliasCommand;
 use Tests\Fixtures\FooCommand;
+use Tests\Fixtures\FooHiddenCommand;
 use Tests\Fixtures\FooRequestFactory;
 
 require_once __DIR__ . '/../../bootstrap.php';
@@ -245,4 +247,50 @@ Toolkit::test(function (): void {
 		}, [getmypid(), 12]);
 		new $class();
 	}, ServiceCreationException::class, 'Custom http.requestFactory is used, argument console.url should be removed.');
+});
+
+// 1 command with aliases
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+		services:
+			foo: Tests\Fixtures\FooAliasCommand
+		', 'neon'));
+	}, [getmypid(), 13]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::type(Application::class, $application);
+	Assert::false($container->isCreated('foo'));
+	Assert::count(1, $container->findByType(Command::class));
+	Assert::type(FooAliasCommand::class, $container->getByType(Command::class));
+	$application->all();
+});
+
+// 1 hidden command
+Toolkit::test(function (): void {
+	$loader = new ContainerLoader(Environment::getTestDir(), true);
+	$class = $loader->load(function (Compiler $compiler): void {
+		$compiler->addExtension('console', new ConsoleExtension(true));
+		$compiler->loadConfig(FileMock::create('
+		console:
+		services:
+			foo: Tests\Fixtures\FooHiddenCommand
+		', 'neon'));
+	}, [getmypid(), 14]);
+
+	/** @var Container $container */
+	$container = new $class();
+
+	$application = $container->getByType(Application::class);
+	Assert::type(Application::class, $application);
+	Assert::false($container->isCreated('foo'));
+	Assert::count(1, $container->findByType(Command::class));
+	Assert::type(FooHiddenCommand::class, $container->getByType(Command::class));
+	$application->all();
 });
