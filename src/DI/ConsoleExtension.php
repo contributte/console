@@ -14,7 +14,10 @@ use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Nette\Utils\Arrays;
+use ReflectionClass;
+use ReflectionProperty;
 use stdClass;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,11 +28,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ConsoleExtension extends CompilerExtension
 {
 
-	private bool $cliMode;
-
-	public function __construct(bool $cliMode = false)
+	public function __construct(
+		private readonly bool $cliMode = false,
+	)
 	{
-		$this->cliMode = $cliMode;
 	}
 
 	public function getConfigSchema(): Schema
@@ -158,10 +160,23 @@ class ConsoleExtension extends CompilerExtension
 			}
 
 			$aliases = [];
-			// Try to detect command name from Command::getDefaultName()
-			if ($commandName === null) {
-				$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
-				if ($commandName === null) {
+			// Try to detect command name from Command::getDefaultName() or Command::defaultName property
+			if (!is_string($commandName) || $commandName === '') {
+				/** @var class-string $className */
+				$className = $service->getType();
+				$reflection = new ReflectionClass($className);
+				$attributes = $reflection->getAttributes(AsCommand::class);
+
+				if ($attributes !== []) {
+					$commandName = $attributes[0]->newInstance()->name;
+				} elseif (method_exists($className, 'getDefaultName')) {
+					$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
+				} elseif (property_exists($className, 'defaultName')) {
+					$rp = new ReflectionProperty($className, 'defaultName');
+					$commandName = $rp->getValue();
+				}
+
+				if (!is_string($commandName) || $commandName === '') {
 					throw new ServiceCreationException(
 						sprintf(
 							'Command "%s" missing #[AsCommand] attribute',
@@ -169,6 +184,7 @@ class ConsoleExtension extends CompilerExtension
 						)
 					);
 				}
+
 				$aliases = explode('|', $commandName);
 				$commandName = array_shift($aliases);
 				if ($commandName === '') {
