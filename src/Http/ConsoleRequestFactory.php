@@ -9,11 +9,10 @@ use Nette\Http\UrlScript;
 class ConsoleRequestFactory extends RequestFactory
 {
 
-	private string $url;
-
-	public function __construct(string $url)
+	public function __construct(
+		private readonly string $url,
+	)
 	{
-		$this->url = $url;
 	}
 
 	public function fromGlobals(): Request

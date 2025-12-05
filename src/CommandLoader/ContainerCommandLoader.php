@@ -10,18 +10,14 @@ use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 class ContainerCommandLoader implements CommandLoaderInterface
 {
 
-	private Container $container;
-
-	/** @var array<string> */
-	private array $commandMap;
-
 	/**
 	 * @param array<string> $commandMap
 	 */
-	public function __construct(Container $container, array $commandMap)
+	public function __construct(
+		private readonly Container $container,
+		private readonly array $commandMap,
+	)
 	{
-		$this->container = $container;
-		$this->commandMap = $commandMap;
 	}
 
 	public function get(string $name): Command
