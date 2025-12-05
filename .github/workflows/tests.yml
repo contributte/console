@@ -35,15 +35,9 @@ jobs:
     with:
       php: "8.2"
 
-  test81:
-    name: "Nette Tester"
-    uses: contributte/.github/.github/workflows/nette-tester.yml@master
-    with:
-      php: "8.1"
-
   testlower:
     name: "Nette Tester"
     uses: contributte/.github/.github/workflows/nette-tester.yml@master
     with:
-      php: "8.1"
+      php: "8.2"
       composer: "composer update --no-interaction --no-progress --prefer-dist --prefer-stable --prefer-lowest"
