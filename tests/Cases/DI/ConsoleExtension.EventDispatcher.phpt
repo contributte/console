@@ -2,35 +2,30 @@
 
 use Contributte\Console\Application;
 use Contributte\Console\DI\ConsoleExtension;
-use Contributte\Tester\Environment;
 use Contributte\Tester\Toolkit;
+use Contributte\Tester\Utils\ContainerBuilder;
+use Contributte\Tester\Utils\Neonkit;
 use Nette\DI\Compiler;
-use Nette\DI\Container;
-use Nette\DI\ContainerLoader;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleErrorEvent;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tester\Assert;
-use Tester\FileMock;
 use Tests\Fixtures\ThrowingCommand;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 Toolkit::test(function (): void {
-	$loader = new ContainerLoader(Environment::getTestDir(), true);
-	$class = $loader->load(function (Compiler $compiler): void {
-		$compiler->addExtension('console', new ConsoleExtension(true));
-		$compiler->loadConfig(FileMock::create('
-		services:
-			- Tests\Fixtures\ThrowingCommand
-			- Symfony\Component\EventDispatcher\EventDispatcher
-		', 'neon'));
-	}, [getmypid(), 1]);
-
-	/** @var Container $container */
-	$container = new $class();
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->addConfig(Neonkit::load(<<<'NEON'
+				services:
+					- Tests\Fixtures\ThrowingCommand
+					- Symfony\Component\EventDispatcher\EventDispatcher
+			NEON));
+		})->build();
 
 	/** @var Application $application */
 	$application = $container->getByType(Application::class);
