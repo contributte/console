@@ -3,33 +3,28 @@
 use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\DI\ConsoleExtension;
-use Contributte\Tester\Environment;
 use Contributte\Tester\Toolkit;
+use Contributte\Tester\Utils\ContainerBuilder;
+use Contributte\Tester\Utils\Neonkit;
 use Nette\DI\Compiler;
-use Nette\DI\Container;
-use Nette\DI\ContainerLoader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Tester\Assert;
-use Tester\FileMock;
 use Tests\Fixtures\FooCommand;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
 // 1 command of type FooCommand lazy-loading
 Toolkit::test(function (): void {
-	$loader = new ContainerLoader(Environment::getTestDir(), true);
-	$class = $loader->load(function (Compiler $compiler): void {
-		$compiler->addExtension('console', new ConsoleExtension(true));
-		$compiler->loadConfig(FileMock::create('
-		console:
-		services:
-			foo: Tests\Fixtures\FooCommand
-		', 'neon'));
-	}, [getmypid(), 1]);
-
-	/** @var Container $container */
-	$container = new $class();
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->addConfig(Neonkit::load(<<<'NEON'
+				console:
+				services:
+					foo: Tests\Fixtures\FooCommand
+			NEON));
+		})->build();
 
 	Assert::type(Application::class, $container->getByType(Application::class));
 
