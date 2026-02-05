@@ -16,6 +16,7 @@ use Tests\Fixtures\FooAliasCommand;
 use Tests\Fixtures\FooCommand;
 use Tests\Fixtures\FooHiddenCommand;
 use Tests\Fixtures\FooRequestFactory;
+use Tests\Fixtures\Version;
 
 require_once __DIR__ . '/../../bootstrap.php';
 
@@ -182,6 +183,22 @@ Toolkit::test(function (): void {
 
 	$application = $container->getByType(Application::class);
 	Assert::equal('Hello world', $application->getName());
+});
+
+// Version as Dynamic parameter
+Toolkit::test(function (): void {
+	$container = ContainerBuilder::of()
+		->withCompiler(function (Compiler $compiler): void {
+			$compiler->setDynamicParameterNames(['version']);
+			$compiler->addExtension('console', new ConsoleExtension(true));
+			$compiler->addConfig(Neonkit::load(<<<'NEON'
+				console:
+					version: Tests\Fixtures\Version::get()
+			NEON));
+		})->build();
+
+	$application = $container->getByType(Application::class);
+	Assert::equal(Version::get(), $application->getVersion());
 });
 
 // Use custom request Factory
