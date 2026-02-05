@@ -39,7 +39,7 @@ class ConsoleExtension extends CompilerExtension
 		return Expect::structure([
 			'url' => Expect::anyOf(Expect::string(), Expect::null())->dynamic(),
 			'name' => Expect::string()->dynamic(),
-			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float()),
+			'version' => Expect::anyOf(Expect::string(), Expect::int(), Expect::float())->dynamic(),
 			'catchExceptions' => Expect::bool()->dynamic(),
 			'autoExit' => Expect::bool(),
 			'helperSet' => Expect::anyOf(Expect::string(), Expect::type(Statement::class)),
@@ -73,7 +73,11 @@ class ConsoleExtension extends CompilerExtension
 
 		// Setup console version
 		if ($config->version !== null) {
-			$applicationDef->addSetup('setVersion', [(string) $config->version]);
+			if (!$config->version instanceof Statement) {
+				$config->version = (string) $config->version;
+			}
+
+			$applicationDef->addSetup('setVersion', [$config->version]);
 		}
 
 		// Catch or populate exceptions
