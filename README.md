@@ -22,7 +22,7 @@ Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact �
   <img src=".docs/assets/console.png">
 </p>
 
-Best Symfony Console for Nette Framework.
+Integration of [Symfony Console](https://symfony.com/doc/current/console.html) into Nette Framework.
 
 ## Versions
 
@@ -31,30 +31,18 @@ Best Symfony Console for Nette Framework.
 | dev    | `^0.12.0` | `master` | `3.2+` | `>=8.2` |
 | stable | `^0.11.0` | `master` | `3.2+` | `>=8.2` |
 
-Integration of [Symfony Console](https://symfony.com/doc/current/console.html) into Nette Framework.
-
 ## Contents
 
-- [Getting started](#getting-started)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-  - [Entrypoint](#entrypoint)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Entrypoint](#entrypoint)
 - [Commands](#commands)
-  - [Example command](#example-command)
-  - [Invokable commands](#invokable-commands)
 - [UI](#ui)
-  - [Styled output](#styled-output)
-  - [Cursor control](#cursor-control)
-  - [Tree display](#tree-display)
 - [Advanced](#advanced)
-  - [Shell completion](#shell-completion)
-  - [Signal handling](#signal-handling)
-  - [Console events](#console-events)
 - [Testing](#testing)
+- [Development](#development)
 
 ---
-
-## Getting started
 
 ## Installation
 
@@ -68,7 +56,7 @@ extensions:
 ```
 
 The extension will look for all commands extending from [`Symfony\Component\Console\Command\Command`](https://github.com/symfony/symfony/blob/master/src/Symfony/Component/Console/Command/Command.php) and automatically add them to the console application.
-That's all. You don't have to worry about anything else.
+No further setup is required.
 
 ## Configuration
 
@@ -167,7 +155,7 @@ exit(App\Bootstrap::boot()
 
 ## Commands
 
-## Example command
+### Example command
 
 In case of having `console.php` as entrypoint (see above), this would add a user with username `john.doe`:
 
@@ -204,21 +192,16 @@ final class AddUserCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		// retrieve passed arguments/options
 		$username = $input->getArgument('username');
 
-		// you can use symfony/console output
 		$output->writeln(\sprintf('Adding user %s…', $username));
 
 		try {
-			// do your logic
 			$this->userFacade->add($username);
-			// styled output is supported as well
 			$output->writeln('<success>✔ Successfully added</success>');
 			return 0;
 
 		} catch (\Exception $e) {
-			// handle error
 			$output->writeln(\sprintf(
 				'<error>❌ Error occurred: </error>',
 				$e->getMessage(),
@@ -242,9 +225,9 @@ services:
 
 > See [Console Commands](https://symfony.com/doc/current/console.html) in Symfony docs.
 
-## Invokable commands
+### Invokable commands
 
-Since Symfony 6.4, you can use `#[Argument]` and `#[Option]` attributes to define command inputs directly on the `__invoke()` method. This approach reduces boilerplate code significantly.
+Since Symfony 6.4, you can use `#[Argument]` and `#[Option]` attributes to define command inputs directly on the `__invoke()` method. This approach reduces boilerplate code.
 
 ```php
 namespace App\Console;
@@ -315,9 +298,9 @@ The `#[Argument]` and `#[Option]` attributes support these parameters:
 
 ## UI
 
-## Styled output
+### Styled output
 
-`SymfonyStyle` provides a consistent, beautiful output formatting API. It reduces boilerplate and ensures your commands have a professional look.
+`SymfonyStyle` provides a consistent output formatting API and reduces command output boilerplate.
 
 ```php
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -334,18 +317,14 @@ final class DemoCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        // Titles and sections
         $io->title('Application Setup');
         $io->section('Step 1: Configuration');
 
-        // Text output
         $io->text('Processing configuration files...');
         $io->text(['Line 1', 'Line 2', 'Line 3']);
 
-        // Lists
         $io->listing(['First item', 'Second item', 'Third item']);
 
-        // Tables
         $io->table(
             ['Name', 'Email', 'Role'],
             [
@@ -354,12 +333,10 @@ final class DemoCommand extends Command
             ]
         );
 
-        // Admonition blocks
         $io->note('This is additional information.');
         $io->caution('Be careful with this operation!');
         $io->warning('This action cannot be undone.');
 
-        // Result blocks
         $io->success('All tasks completed successfully!');
         $io->error('Something went wrong.');
         $io->info('Operation finished.');
@@ -375,18 +352,14 @@ final class DemoCommand extends Command
 `SymfonyStyle` also simplifies user interaction:
 
 ```php
-// Simple question
 $name = $io->ask('What is your name?', 'Anonymous');
 
-// Hidden input (for passwords)
 $password = $io->askHidden('Enter password');
 
-// Confirmation
 if ($io->confirm('Do you want to continue?', true)) {
     // ...
 }
 
-// Choice selection
 $color = $io->choice('Select a color', ['red', 'green', 'blue'], 'blue');
 ```
 
@@ -396,7 +369,7 @@ $color = $io->choice('Select a color', ['red', 'green', 'blue'], 'blue');
 $io->progressStart(100);
 
 for ($i = 0; $i < 100; $i++) {
-    // Process item...
+    // process item
     $io->progressAdvance();
 }
 
@@ -405,7 +378,7 @@ $io->progressFinish();
 
 > See [How to Style a Console Command](https://symfony.com/doc/current/console/style.html) and [Progress Bar](https://symfony.com/doc/current/components/console/helpers/progressbar.html) in Symfony docs.
 
-## Cursor control
+### Cursor control
 
 The `Cursor` class allows direct manipulation of the terminal cursor position. This is useful for building interactive TUIs, dashboards, or real-time displays.
 
@@ -415,29 +388,24 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 $cursor = new Cursor($output);
 
-// Movement
 $cursor->moveUp(2);          // Move 2 lines up
 $cursor->moveDown(1);        // Move 1 line down
 $cursor->moveLeft(5);        // Move 5 columns left
 $cursor->moveRight(3);       // Move 3 columns right
 $cursor->moveToPosition(10, 5); // Move to column 10, row 5
 
-// Visibility
 $cursor->hide();             // Hide cursor
 $cursor->show();             // Show cursor
 
-// Save/restore position
 $cursor->savePosition();     // Save current position
 // ... do something ...
 $cursor->restorePosition();  // Return to saved position
 
-// Clearing
 $cursor->clearLine();        // Clear entire current line
 $cursor->clearLineAfter();   // Clear from cursor to end of line
 $cursor->clearOutput();      // Clear from cursor to end of screen
 $cursor->clearScreen();      // Clear entire screen
 
-// Get current position (returns [column, row])
 [$column, $row] = $cursor->getCurrentPosition();
 ```
 
@@ -486,7 +454,7 @@ final class MonitorCommand extends Command
 
 > See [Cursor Helper](https://symfony.com/doc/current/components/console/helpers/cursor.html) in Symfony docs.
 
-## Tree display
+### Tree display
 
 The `TreeHelper` (Symfony 7.3+) renders hierarchical data as ASCII trees, useful for displaying file structures, dependency trees, or any nested data.
 
@@ -495,10 +463,8 @@ use Symfony\Component\Console\Helper\TreeHelper;
 use Symfony\Component\Console\Helper\TreeNode;
 use Symfony\Component\Console\Output\OutputInterface;
 
-// Create root node
 $root = new TreeNode('src/');
 
-// Add children
 $root->addChild(new TreeNode('Console/'))
     ->addChild(new TreeNode('Command/'))
     ->addChild(new TreeNode('CreateUserCommand.php'))
@@ -510,7 +476,6 @@ $root->addChild(new TreeNode('Model/'))
 
 $root->addChild(new TreeNode('bootstrap.php'));
 
-// Render
 TreeHelper::render($output, $root);
 ```
 
@@ -562,7 +527,7 @@ TreeHelper::render($output, $root);
 
 ## Advanced
 
-## Shell completion
+### Shell completion
 
 Symfony Console provides built-in shell completion for Bash, Zsh, and Fish shells. This allows tab-completion of command names, options, and even argument values.
 
@@ -571,24 +536,24 @@ Symfony Console provides built-in shell completion for Bash, Zsh, and Fish shell
 Run the completion command with your shell name to get installation instructions:
 
 ```bash
-# For Bash
 php bin/console completion bash
-
-# For Zsh
 php bin/console completion zsh
-
-# For Fish
 php bin/console completion fish
 ```
 
 Each shell has specific setup requirements:
 
 **Bash** - Install the `bash-completion` package first:
-```bash
-# Debian/Ubuntu
-apt install bash-completion
 
-# macOS with Homebrew
+On Debian/Ubuntu:
+
+```bash
+apt install bash-completion
+```
+
+On macOS with Homebrew:
+
+```bash
 brew install bash-completion
 ```
 
@@ -628,7 +593,7 @@ Now pressing Tab after the command will suggest `Alice`, `Bob`, or `Charlie` for
 
 > See [How to Add Console Command Completion](https://symfony.com/doc/current/console/completion.html) in Symfony docs.
 
-## Signal handling
+### Signal handling
 
 For long-running commands (workers, daemons, queue consumers), you may need to handle OS signals like `SIGINT` (Ctrl+C) or `SIGTERM` for graceful shutdown. Implement `SignalableCommandInterface` to subscribe to signals:
 
@@ -654,8 +619,7 @@ final class WorkerCommand extends Command implements SignalableCommandInterface
     {
         $this->shouldStop = true;
 
-        // Return false to continue execution (graceful shutdown)
-        // Return an integer to exit immediately with that code
+        // return false to continue execution, or an integer to exit immediately
         return false;
     }
 
@@ -664,10 +628,10 @@ final class WorkerCommand extends Command implements SignalableCommandInterface
         $output->writeln('Worker started. Press Ctrl+C to stop gracefully.');
 
         while (!$this->shouldStop) {
-            // Process jobs from queue
+            // process jobs from queue
             $this->processNextJob();
 
-            // Small sleep to prevent CPU spinning
+            // small sleep to prevent CPU spinning
             usleep(100000);
         }
 
@@ -691,7 +655,7 @@ Common signals:
 
 > See [Console Signals](https://symfony.com/doc/current/components/console/events.html#console-events-signal) in Symfony docs.
 
-## Console events
+### Console events
 
 Symfony Console dispatches events during command execution. You can use these events for logging, profiling, error handling, and more. This extension automatically registers the EventDispatcher if available in the container.
 
@@ -766,7 +730,7 @@ final class ConsoleEventSubscriber implements EventSubscriberInterface
         $error = $event->getError();
         $this->logger->error('Command error: ' . $error->getMessage());
 
-        // Optionally change the exit code
+        // optionally change the exit code
         $event->setExitCode(1);
     }
 
@@ -793,7 +757,7 @@ services:
 
 Symfony Console provides `CommandTester` and `ApplicationTester` for testing commands without executing them in a real terminal.
 
-## Testing a single command
+### Testing a single command
 
 ```php
 use App\Console\CreateUserCommand;
@@ -813,12 +777,10 @@ final class CreateUserCommandTest extends TestCase
             '--admin' => true,
         ]);
 
-        // Assert exit code
         $tester->assertCommandIsSuccessful();
         // or
         $this->assertSame(0, $tester->getStatusCode());
 
-        // Assert output contains expected text
         $output = $tester->getDisplay();
         $this->assertStringContainsString('User "john" created', $output);
     }
@@ -826,7 +788,7 @@ final class CreateUserCommandTest extends TestCase
 }
 ```
 
-## Testing with Nette DI
+### Testing with Nette DI
 
 For commands with dependencies, use Nette's container:
 
@@ -861,36 +823,30 @@ final class CreateUserCommandTest extends TestCase
 }
 ```
 
-## Testing interactive commands
+### Testing interactive commands
 
 For commands with user prompts, use `setInputs()`:
 
 ```php
 $tester = new CommandTester($command);
 
-// Simulate user typing "yes" then "john@example.com"
 $tester->setInputs(['yes', 'john@example.com']);
 
 $tester->execute(['username' => 'john']);
 ```
 
-## Useful assertions
+### Useful assertions
 
 ```php
-// Check exit code
 $tester->assertCommandIsSuccessful();
 
-// Get output
 $output = $tester->getDisplay();
 $output = $tester->getDisplay(true); // Normalized (no decorations)
 
-// Get error output (stderr)
 $errorOutput = $tester->getErrorOutput();
 
-// Get status code
 $exitCode = $tester->getStatusCode();
 
-// Get input used
 $input = $tester->getInput();
 ```
 
