@@ -6,6 +6,8 @@ use Contributte\Console\Application;
 use Contributte\Console\CommandLoader\ContainerCommandLoader;
 use Contributte\Console\Http\ConsoleRequestFactory;
 use Nette\DI\CompilerExtension;
+use Nette\DI\ContainerBuilder;
+use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\MissingServiceException;
@@ -13,9 +15,7 @@ use Nette\DI\ServiceCreationException;
 use Nette\Http\RequestFactory;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use Nette\Utils\Arrays;
 use ReflectionClass;
-use ReflectionProperty;
 use stdClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -146,62 +146,10 @@ class ConsoleExtension extends CompilerExtension
 		}
 
 		// Add all commands to map for command loader
-		$commands = $builder->findByType(Command::class);
 		$commandMap = [];
 
-		// Iterate over all commands and build commandMap
-		foreach ($commands as $serviceName => $service) {
-			$tags = $service->getTags();
-			$commandName = null;
-
-			// Try to use console.command tag
-			if (isset($tags['console.command'])) {
-				if (is_string($tags['console.command'])) {
-					$commandName = $tags['console.command'];
-				} elseif (is_array($tags['console.command'])) {
-					$commandName = Arrays::get($tags['console.command'], 'name', null);
-				}
-			}
-
-			$aliases = [];
-			// Try to detect command name from Command::getDefaultName() or Command::defaultName property
-			if (!is_string($commandName) || $commandName === '') {
-				/** @var class-string $className */
-				$className = $service->getType();
-				$reflection = new ReflectionClass($className);
-				$attributes = $reflection->getAttributes(AsCommand::class);
-
-				if ($attributes !== []) {
-					$commandName = $attributes[0]->newInstance()->name;
-				} elseif (method_exists($className, 'getDefaultName')) {
-					$commandName = call_user_func([$service->getType(), 'getDefaultName']); // @phpstan-ignore-line
-				} elseif (property_exists($className, 'defaultName')) {
-					$rp = new ReflectionProperty($className, 'defaultName');
-					$commandName = $rp->getValue();
-				}
-
-				if (!is_string($commandName) || $commandName === '') {
-					throw new ServiceCreationException(
-						sprintf(
-							'Command "%s" missing #[AsCommand] attribute',
-							$service->getType(),
-						)
-					);
-				}
-
-				$aliases = explode('|', $commandName);
-				$commandName = array_shift($aliases);
-				if ($commandName === '') {
-					$commandName = array_shift($aliases);
-				}
-			}
-
-			// Append service to command map
-			$commandMap[$commandName] = $serviceName;
-
-			foreach ($aliases as $alias) {
-				$commandMap[$alias] = $serviceName;
-			}
+		foreach ($builder->getDefinitions() as $service) {
+			$commandMap = array_replace($commandMap, $this->resolveCommandServices($builder, $service));
 		}
 
 		/** @var ServiceDefinition $commandLoaderDef */
@@ -212,9 +160,150 @@ class ConsoleExtension extends CompilerExtension
 		try {
 			$dispatcherDef = $builder->getDefinitionByType(EventDispatcherInterface::class);
 			$applicationDef->addSetup('setDispatcher', [$dispatcherDef]);
-		} catch (MissingServiceException $e) {
+		} catch (MissingServiceException) {
 			// Event dispatcher is not installed, ignore
 		}
+	}
+
+	/**
+	 * Returns the "name => service" map for a console command (including aliases), or an empty array otherwise.
+	 * Commands are detected via Command inheritance, the "console.command" tag, or the #[AsCommand] attribute.
+	 *
+	 * @return array<string, string>
+	 */
+	private function resolveCommandServices(ContainerBuilder $builder, Definition $service): array
+	{
+		$serviceName = $service->getName();
+		$type = $service->getType();
+
+		if ($serviceName === null || $type === null) {
+			return [];
+		}
+
+		$tag = $service->getTag('console.command');
+		$reflectionClass = new ReflectionClass($type);
+		$extendsCommand = $reflectionClass->isSubclassOf(Command::class);
+		$asCommandAttribute = ($reflectionClass->getAttributes(AsCommand::class)[0] ?? null)?->newInstance();
+
+		if (!$extendsCommand) {
+			if ($tag === null && $asCommandAttribute === null) {
+				return [];
+			}
+
+			if (!$reflectionClass->hasMethod('__invoke')) {
+				throw new ServiceCreationException(sprintf(
+					'Service "%s" of type "%s" is registered as a console command (via "console.command" tag or #[AsCommand] attribute), but is neither a subclass of "%s" nor has an __invoke()" method.',
+					$serviceName,
+					$type,
+					Command::class,
+				));
+			}
+		}
+
+		// The resolved name may be pipe-separated (name|alias1|alias2).
+		// A leading pipe marks a hidden command, as in Symfony's Command constructor.
+		$aliases = explode('|', $this->resolveCommandName($type, $tag, $asCommandAttribute));
+		/** @var string $commandName */
+		$commandName = array_shift($aliases);
+		$isHidden = $commandName === '';
+
+		if ($isHidden) {
+			/** @var string $commandName */
+			$commandName = array_shift($aliases);
+		}
+
+		$commandServiceName = $serviceName;
+
+		if (!$extendsCommand) {
+			$commandServiceName = $this->registerInvokableCommand(
+				$builder,
+				$serviceName,
+				$commandName,
+				$aliases,
+				$isHidden,
+				$asCommandAttribute,
+			);
+		}
+
+		return array_fill_keys([$commandName, ...$aliases], $commandServiceName);
+	}
+
+	/**
+	 * @param class-string $type
+	 */
+	private function resolveCommandName(string $type, mixed $tag, ?AsCommand $asCommandAttribute): string
+	{
+		$commandName = null;
+
+		if (is_string($tag)) {
+			$commandName = $tag;
+		} elseif (is_array($tag)) {
+			$commandName = $tag['name'] ?? null;
+		}
+
+		if (is_string($commandName) && $commandName !== '') {
+			return $commandName;
+		}
+
+		if ($asCommandAttribute !== null) {
+			$commandName = $asCommandAttribute->name;
+		} elseif (is_callable([$type, 'getDefaultName'])) {
+			$commandName = $type::getDefaultName();
+		}
+
+		if (!is_string($commandName) || $commandName === '') {
+			throw new ServiceCreationException(sprintf('Command "%s" missing #[AsCommand] attribute', $type));
+		}
+
+		return $commandName;
+	}
+
+	/**
+	 * Registers a new Command wrapper service for an invokable command.
+	 *
+	 * @param string[] $aliases
+	 */
+	private function registerInvokableCommand(
+		ContainerBuilder $builder,
+		string $invokableServiceName,
+		string $commandName,
+		array $aliases,
+		bool $isHidden,
+		?AsCommand $asCommandAttribute,
+	): string
+	{
+		$commandServiceName = $this->prefix($invokableServiceName . '.command');
+		$commandDef = $builder->addDefinition($commandServiceName)
+			->setFactory(Command::class)
+			->setAutowired(false)
+			->addSetup('setCode', ['@' . $invokableServiceName])
+			->addSetup('setName', [$commandName]);
+
+		if ($aliases !== []) {
+			$commandDef->addSetup('setAliases', [$aliases]);
+		}
+
+		if ($isHidden) {
+			$commandDef->addSetup('setHidden', [true]);
+		}
+
+		if ($asCommandAttribute === null) {
+			return $commandServiceName;
+		}
+
+		if (($asCommandAttribute->description ?? '') !== '') {
+			$commandDef->addSetup('setDescription', [$asCommandAttribute->description]);
+		}
+
+		if (($asCommandAttribute->help ?? '') !== '') {
+			$commandDef->addSetup('setHelp', [$asCommandAttribute->help]);
+		}
+
+		foreach ($asCommandAttribute->usages as $usage) {
+			$commandDef->addSetup('addUsage', [$usage]);
+		}
+
+		return $commandServiceName;
 	}
 
 }

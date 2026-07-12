@@ -17,7 +17,7 @@ final class FooAliasCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		return 0;
+		return self::SUCCESS;
 	}
 
 }

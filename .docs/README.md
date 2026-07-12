@@ -11,6 +11,7 @@ Integration of [Symfony Console](https://symfony.com/doc/current/console.html) i
 - [Commands](#commands)
   - [Example command](#example-command)
   - [Invokable commands](#invokable-commands)
+  - [Commands without extending Command](#commands-without-extending-command)
 - [UI](#ui)
   - [Styled output](#styled-output)
   - [Cursor control](#cursor-control)
@@ -279,6 +280,58 @@ The `#[Argument]` and `#[Option]` attributes support these parameters:
 - `default` - Default value (can also use PHP default parameter value)
 
 > See [Console Input](https://symfony.com/doc/current/console/input.html) in Symfony docs.
+
+## Commands without extending Command
+
+Since Symfony Console 7.3, a service doesn't have to extend Symfony's `Command` class at all - a plain class with a public `__invoke()` method is enough. Behind the scenes, the extension wraps it into a synthetic `Command` instance via `Command::setCode()`, the same way Symfony's own `AddConsoleCommandPass` does for the framework bundle.
+
+```php
+namespace App\Console;
+
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+#[AsCommand(
+    name: 'app:greet',
+    description: 'Greets the given name',
+    usages: ['John', '--yell John'],
+)]
+final class GreetCommand
+{
+
+    public function __invoke(InputInterface $input, OutputInterface $output): int
+    {
+        $output->writeln('Hello!');
+
+        return Command::SUCCESS;
+    }
+
+}
+```
+
+```neon
+services:
+	- App\Console\GreetCommand
+```
+
+The command can also be discovered purely via the `console.command` tag, without the attribute at all:
+
+```neon
+services:
+	greet:
+		class: App\Console\GreetCommand
+		tags: [console.command: app:greet]
+```
+
+A service is registered as a console command if it meets at least one of these conditions:
+
+- it extends `Symfony\Component\Console\Command\Command`
+- it carries the `console.command` tag
+- it's annotated with `#[AsCommand]`
+
+> See [Invokable Commands](https://symfony.com/blog/new-in-symfony-7-3-invokable-commands-and-input-attributes) blog post (Symfony 7.3+).
 
 ---
 

@@ -20,7 +20,7 @@ final class HelperSetCommand extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		return 0;
+		return self::SUCCESS;
 	}
 
 }

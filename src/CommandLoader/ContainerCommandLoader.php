@@ -11,7 +11,7 @@ class ContainerCommandLoader implements CommandLoaderInterface
 {
 
 	/**
-	 * @param array<string> $commandMap
+	 * @param array<string, string> $commandMap
 	 */
 	public function __construct(
 		private readonly Container $container,
