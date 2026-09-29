@@ -43,46 +43,8 @@ extensions:
 	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 ```
 
-Write a command and name it with `#[AsCommand]`:
-
-```php
-namespace App\Console;
-
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-#[AsCommand(name: 'app:hello', description: 'Prints a greeting')]
-final class HelloCommand extends Command
-{
-
-	protected function execute(InputInterface $input, OutputInterface $output): int
-	{
-		$output->writeln('Hello from Nette');
-
-		return Command::SUCCESS;
-	}
-
-}
-```
-
-Register it as a service:
-
-```neon
-services:
-	- App\Console\HelloCommand
-```
-
-With the entrypoint from the [documentation](.docs/README.md#entrypoint) saved as `bin/console`, run the command:
-
-```bash
-php bin/console app:hello
-```
-
-## Documentation
-
-For details on how to use this package, check out the [documentation](.docs).
+Every Symfony `Command` registered as a service is then available in your console. The
+[documentation](.docs/README.md#entrypoint) shows the `bin/console` entrypoint and a first command.
 
 ## Versions
 
@@ -93,9 +55,19 @@ For details on how to use this package, check out the [documentation](.docs).
 
 ## Development
 
+Install the dependencies and run the checks:
+
+```bash
+make install   # install dependencies
+make qa        # check code style and run static analysis
+make tests     # run tests
+```
+
+Run `make` to list every target.
+
 See [how to contribute](https://contributte.org/contributing.html) to this package.
 
-This package is currently maintained by these authors.
+This package is maintained by these authors.
 
 <a href="https://github.com/f3l1x">
   <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
